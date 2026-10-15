@@ -7,6 +7,11 @@ from app.schemas.catalogo_servico import (
     CatalogoServicoResponse
 )
 
+from app.schemas.lancamento_servico import (
+    LancamentoServicoCreate,
+    LancamentoServicoResponse
+)
+
 __all__ = [
     "ServicoBase",
     "ServicoCreate",
@@ -15,6 +20,9 @@ __all__ = [
     "CatalogoServicoBase",
     "CatalogoServicoCreate",
     "CatalogoServicoUpdate",
-    "CatalogoServicoResponse"
+    "CatalogoServicoResponse",
+    "LancamentoServicoCreate",
+    "LancamentoServicoResponse"
 ]
+
 

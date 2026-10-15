@@ -30,7 +30,8 @@ from fastapi.middleware.cors import CORSMiddleware
 # Importações dos módulos internos
 from app.core.database import engine, Base
 import app.models  # Garante que todos os models sejam descobertos pelo SQLAlchemy
-from app.controllers.servico_controller import router as servico_router
+from app.routers.catalogo_router import router as catalogo_router
+from app.routers.lancamento_router import router as lancamento_router
 
 
 # Gerenciador de ciclo de vida (Lifespan) da aplicação (padrão moderno do FastAPI)
@@ -65,8 +66,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Registro dos Controllers (Rotas) com prefixo de versionamento de API
-app.include_router(servico_router, prefix="/api/v1")
+# Registro dos Routers (Controllers) com prefixo de versionamento da API
+app.include_router(catalogo_router, prefix="/api/v1")
+app.include_router(lancamento_router, prefix="/api/v1")
+
+
 
 
 @app.get("/", tags=["Health Check"])
