@@ -42,7 +42,7 @@ export default function TabsNavigation({ activeTab, onSelectTab, counts = {}, pe
   );
 
   return (
-    <nav className="border-b border-slate-200 bg-white" aria-label="Abas de Navegação">
+    <nav className="border-b border-slate-200/80 bg-white sticky top-16 z-20 shadow-2xs" aria-label="Abas de Navegação">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex space-x-2 sm:space-x-8 -mb-px overflow-x-auto scrollbar-none py-1">
           {tabs.map((tab) => {
@@ -53,33 +53,33 @@ export default function TabsNavigation({ activeTab, onSelectTab, counts = {}, pe
               <button
                 key={tab.id}
                 onClick={() => onSelectTab(tab.id)}
-                className={`group inline-flex items-center gap-2.5 py-4 px-3 sm:px-4 border-b-2 font-medium text-sm whitespace-nowrap transition-all duration-200 rounded-t-lg ${
+                className={`group inline-flex items-center gap-2.5 py-3.5 px-3 sm:px-4 border-b-2 font-semibold text-sm whitespace-nowrap transition-all duration-200 rounded-t-xl ${
                   isActive
-                    ? 'border-brand-600 text-brand-700 bg-brand-50/40'
+                    ? 'border-indigo-600 text-indigo-700 bg-indigo-50/50 shadow-2xs'
                     : 'border-transparent text-slate-500 hover:text-slate-800 hover:border-slate-300 hover:bg-slate-50'
                 }`}
               >
                 <div
-                  className={`p-1.5 rounded-md transition-colors ${
+                  className={`p-1.5 rounded-lg transition-colors ${
                     isActive
-                      ? 'bg-brand-600 text-white'
+                      ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/25'
                       : 'bg-slate-100 text-slate-500 group-hover:text-slate-700 group-hover:bg-slate-200'
                   }`}
                 >
                   <Icon className="w-4 h-4" />
                 </div>
 
-                <span className="font-semibold text-xs sm:text-sm">
+                <span className="font-bold text-xs sm:text-sm">
                   <span className="hidden sm:inline">{tab.label}</span>
                   <span className="sm:hidden">{tab.shortLabel}</span>
                 </span>
 
                 {tab.count !== null && tab.count !== undefined && (
                   <span
-                    className={`ml-1 text-xs px-2 py-0.5 rounded-full font-medium transition-colors ${
+                    className={`ml-1 text-xs px-2 py-0.5 rounded-full font-bold transition-colors ${
                       isActive
-                        ? 'bg-brand-100 text-brand-800'
-                        : 'bg-slate-100 text-slate-600 group-hover:bg-slate-200'
+                        ? 'bg-indigo-100 text-indigo-800 border border-indigo-200/60'
+                        : 'bg-slate-100 text-slate-600 border border-slate-200/60 group-hover:bg-slate-200'
                     }`}
                   >
                     {tab.count}

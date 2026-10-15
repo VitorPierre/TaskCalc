@@ -506,10 +506,10 @@ export default function LoginView({ onLoginSuccess }) {
                   executarLoginRapido('prestador@taskcalc.com', 'senha123')
                 }
                 disabled={carregando}
-                className="px-3 py-2 rounded-xl border border-blue-200 bg-blue-50/60 hover:bg-blue-100 text-blue-900 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
+                className="px-3 py-2 rounded-xl border border-indigo-200 bg-indigo-50/70 hover:bg-indigo-100 text-indigo-900 text-xs font-bold flex items-center justify-center gap-1.5 transition-colors"
                 title="Entrar com conta padrão de PRESTADOR (aba Catálogo oculta)"
               >
-                <Briefcase className="w-3.5 h-3.5 text-blue-600" />
+                <Briefcase className="w-3.5 h-3.5 text-indigo-600" />
                 <span>Entrar como Prestador</span>
               </button>
             </div>

@@ -364,9 +364,9 @@ export default function FechamentoView({ onFechamentoConcluido }) {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
           {/* Card 1: VALOR BRUTO */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+              <span className="text-xs font-bold text-slate-500 uppercase tracking-wide">
                 Total Bruto
               </span>
               <div className="w-9 h-9 rounded-xl bg-slate-100 text-slate-700 flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -374,10 +374,10 @@ export default function FechamentoView({ onFechamentoConcluido }) {
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-extrabold text-slate-900 tracking-tight">
+              <div className="text-2xl font-black text-slate-900 tracking-tight tabular-nums">
                 {formatarMoeda(valorBrutoCalculado)}
               </div>
-              <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-slate-500 mt-1 flex items-center gap-1 font-medium">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-slate-400"></span>
                 Soma de todos os serviços pendentes
               </p>
@@ -385,9 +385,9 @@ export default function FechamentoView({ onFechamentoConcluido }) {
           </div>
 
           {/* Card 2: DESCONTOS (-) */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-rose-600 uppercase tracking-wide flex items-center gap-1">
+              <span className="text-xs font-bold text-rose-600 uppercase tracking-wide flex items-center gap-1">
                 Descontos Aplicados
               </span>
               <div className="w-9 h-9 rounded-xl bg-rose-50 text-rose-600 flex items-center justify-center group-hover:scale-105 transition-transform">
@@ -395,10 +395,10 @@ export default function FechamentoView({ onFechamentoConcluido }) {
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-extrabold text-rose-600 tracking-tight">
+              <div className="text-2xl font-black text-rose-600 tracking-tight tabular-nums">
                 - {formatarMoeda(descontoNum)}
               </div>
-              <p className="text-[11px] text-rose-600/80 mt-1 flex items-center gap-1">
+              <p className="text-[11px] text-rose-600/80 mt-1 flex items-center gap-1 font-medium">
                 <span className="inline-block w-1.5 h-1.5 rounded-full bg-rose-400"></span>
                 Abatimento no total final
               </p>
@@ -406,35 +406,35 @@ export default function FechamentoView({ onFechamentoConcluido }) {
           </div>
 
           {/* Card 3: ACRÉSCIMOS (+) */}
-          <div className="bg-white rounded-2xl p-5 border border-slate-200/90 shadow-xs hover:shadow-md transition-shadow relative overflow-hidden group">
+          <div className="bg-white rounded-xl p-5 border border-slate-200/80 shadow-sm hover:shadow-md transition-all relative overflow-hidden group">
             <div className="flex items-center justify-between">
-              <span className="text-xs font-semibold text-blue-600 uppercase tracking-wide flex items-center gap-1">
+              <span className="text-xs font-bold text-indigo-600 uppercase tracking-wide flex items-center gap-1">
                 Acréscimos / Adicionais
               </span>
-              <div className="w-9 h-9 rounded-xl bg-blue-50 text-blue-600 flex items-center justify-center group-hover:scale-105 transition-transform">
+              <div className="w-9 h-9 rounded-xl bg-indigo-50 text-indigo-600 flex items-center justify-center group-hover:scale-105 transition-transform">
                 <TrendingUp className="w-4 h-4" />
               </div>
             </div>
             <div className="mt-3">
-              <div className="text-2xl font-extrabold text-blue-600 tracking-tight">
+              <div className="text-2xl font-black text-indigo-600 tracking-tight tabular-nums">
                 + {formatarMoeda(acrescimoNum)}
               </div>
-              <p className="text-[11px] text-blue-600/80 mt-1 flex items-center gap-1">
-                <span className="inline-block w-1.5 h-1.5 rounded-full bg-blue-400"></span>
+              <p className="text-[11px] text-indigo-600/80 mt-1 flex items-center gap-1 font-medium">
+                <span className="inline-block w-1.5 h-1.5 rounded-full bg-indigo-400"></span>
                 Horas extras, deslocamento ou taxas
               </p>
             </div>
           </div>
 
           {/* Card 4: VALOR LÍQUIDO FINAL (DESTAQUE MAIOR COM COR DE DESTAQUE) */}
-          <div className="rounded-2xl p-5 bg-gradient-to-br from-emerald-600 via-emerald-600 to-teal-700 text-white shadow-lg shadow-emerald-600/25 relative overflow-hidden group border border-emerald-500/40">
+          <div className="rounded-xl p-5 bg-gradient-to-br from-emerald-600 via-emerald-600 to-teal-700 text-white shadow-md shadow-emerald-600/25 relative overflow-hidden group border border-emerald-500/40">
             {/* Efeito luminoso de fundo */}
             <div className="absolute -right-6 -bottom-6 w-28 h-28 bg-white/10 rounded-full blur-xl pointer-events-none group-hover:scale-125 transition-transform duration-500"></div>
 
             <div className="flex items-center justify-between relative z-10">
               <div className="flex items-center gap-1.5">
                 <Sparkles className="w-3.5 h-3.5 text-emerald-200 animate-pulse" />
-                <span className="text-xs font-bold uppercase tracking-wider text-emerald-100">
+                <span className="text-xs font-extrabold uppercase tracking-wider text-emerald-100">
                   Valor Líquido Final
                 </span>
               </div>
@@ -444,7 +444,7 @@ export default function FechamentoView({ onFechamentoConcluido }) {
             </div>
 
             <div className="mt-3 relative z-10">
-              <div className="text-3xl font-black text-white tracking-tight drop-shadow-xs">
+              <div className="text-3xl font-black text-white tracking-tight drop-shadow-xs tabular-nums">
                 {formatarMoeda(valorLiquidoCalculado)}
               </div>
               <p className="text-xs text-emerald-100/90 mt-1 font-medium flex items-center gap-1">

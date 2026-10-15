@@ -38,13 +38,13 @@ export default function Navbar({ usuario, onLogout }) {
           
           {/* Logo e Nome do Sistema */}
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-indigo-500 flex items-center justify-center text-white shadow-md shadow-brand-500/20">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 to-indigo-500 flex items-center justify-center text-white shadow-sm shadow-indigo-600/25">
               <Calculator className="w-5 h-5" />
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-xl tracking-tight text-slate-900">Task<span className="text-brand-600">Calc</span></span>
-                <span className="text-[10px] font-semibold uppercase px-2 py-0.5 rounded-full bg-brand-50 text-brand-700 border border-brand-200/60">
+                <span className="font-bold text-xl tracking-tight text-slate-900">Task<span className="text-indigo-600">Calc</span></span>
+                <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60">
                   v1.0
                 </span>
               </div>
@@ -91,8 +91,8 @@ export default function Navbar({ usuario, onLogout }) {
                     <span>GESTOR</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200/80">
-                    <Briefcase className="w-3.5 h-3.5 text-blue-600" />
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-800 border border-indigo-200/80">
+                    <Briefcase className="w-3.5 h-3.5 text-indigo-600" />
                     <span>PRESTADOR</span>
                   </div>
                 )}

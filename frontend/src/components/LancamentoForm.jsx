@@ -240,12 +240,12 @@ export default function LancamentoForm({ onLancamentoCriado }) {
       {/* ----------------------------------------------------------------- */}
       {/* SEÇÃO 1: FORMULÁRIO DE NOVO LANÇAMENTO                            */}
       {/* ----------------------------------------------------------------- */}
-      <div className="bg-white rounded-2xl border border-slate-200/90 shadow-xs overflow-hidden">
+      <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
         {/* Cabeçalho do Card */}
-        <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-900 via-slate-800 to-brand-950 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+        <div className="p-5 sm:p-6 bg-gradient-to-r from-slate-900 via-slate-800 to-indigo-950 text-white flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
             <div className="flex items-center gap-2">
-              <span className="p-1.5 rounded-lg bg-brand-500/20 text-brand-300 border border-brand-500/30">
+              <span className="p-1.5 rounded-lg bg-indigo-500/20 text-indigo-300 border border-indigo-500/30">
                 <Plus className="w-4 h-4" />
               </span>
               <h3 className="text-base sm:text-lg font-bold tracking-tight text-white">
@@ -258,13 +258,13 @@ export default function LancamentoForm({ onLancamentoCriado }) {
           </div>
 
           {/* Seletor de Modo: Padronizado vs Variável */}
-          <div className="inline-flex p-1 bg-slate-800/80 rounded-xl border border-slate-700/80 self-start sm:self-auto">
+          <div className="inline-flex p-1 bg-slate-800/90 rounded-xl border border-slate-700/80 self-start sm:self-auto shadow-xs">
             <button
               type="button"
               onClick={() => alternarModo('padronizado')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 modo === 'padronizado'
-                  ? 'bg-brand-600 text-white shadow-xs'
+                  ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
                   : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
               }`}
             >
@@ -274,9 +274,9 @@ export default function LancamentoForm({ onLancamentoCriado }) {
             <button
               type="button"
               onClick={() => alternarModo('variavel')}
-              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all ${
+              className={`inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold transition-all ${
                 modo === 'variavel'
-                  ? 'bg-brand-600 text-white shadow-xs'
+                  ? 'bg-indigo-600 text-white shadow-sm shadow-indigo-600/30'
                   : 'text-slate-300 hover:text-white hover:bg-slate-700/50'
               }`}
             >
@@ -492,7 +492,7 @@ export default function LancamentoForm({ onLancamentoCriado }) {
               <button
                 type="submit"
                 disabled={salvando}
-                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-semibold text-white bg-brand-600 hover:bg-brand-700 active:bg-brand-800 rounded-xl shadow-md shadow-brand-600/20 transition-all hover:shadow-lg disabled:opacity-50"
+                className="inline-flex items-center justify-center gap-2 px-6 py-2.5 text-xs sm:text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 rounded-xl shadow-sm shadow-emerald-600/25 transition-all hover:shadow-md disabled:opacity-50"
               >
                 {salvando ? (
                   <>
@@ -502,7 +502,7 @@ export default function LancamentoForm({ onLancamentoCriado }) {
                 ) : (
                   <>
                     <Plus className="w-4 h-4" />
-                    <span>Lançar Serviço</span>
+                    <span>Lançar Atendimento</span>
                   </>
                 )}
               </button>
@@ -563,10 +563,10 @@ export default function LancamentoForm({ onLancamentoCriado }) {
             </p>
           </div>
         ) : (
-          <div className="bg-white rounded-2xl border border-slate-200/90 shadow-2xs overflow-hidden">
+          <div className="bg-white rounded-xl border border-slate-200/80 shadow-sm overflow-hidden">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
-                <thead className="bg-slate-50 border-b border-slate-200 text-slate-600 font-semibold uppercase tracking-wider text-[11px]">
+                <thead className="bg-slate-100/70 border-b border-slate-200/80 text-slate-600 font-bold uppercase tracking-wider text-[10px]">
                   <tr>
                     <th className="py-3 px-4">Data Execução</th>
                     <th className="py-3 px-4">Serviço Prestado</th>
@@ -578,51 +578,57 @@ export default function LancamentoForm({ onLancamentoCriado }) {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-slate-100">
-                  {lancamentosPendentes.map((item) => (
-                    <tr key={item.id} className="hover:bg-slate-50/80 transition-colors">
-                      <td className="py-3.5 px-4 text-slate-500 whitespace-nowrap font-medium">
+                  {lancamentosPendentes.map((item, index) => (
+                    <tr
+                      key={item.id}
+                      className={`transition-colors duration-150 hover:bg-indigo-50/40 ${
+                        index % 2 === 0 ? 'bg-white' : 'bg-slate-50/60'
+                      }`}
+                    >
+                      <td className="py-3.5 px-4 text-slate-600 whitespace-nowrap font-medium">
                         {formatarData(item.data_execucao)}
                       </td>
                       <td className="py-3.5 px-4">
-                        <div className="font-semibold text-slate-900 text-sm">{item.nome_servico}</div>
+                        <div className="font-bold text-slate-900 text-sm">{item.nome_servico}</div>
                         {item.descricao && (
-                          <div className="text-slate-500 text-[11px] mt-0.5 line-clamp-1">{item.descricao}</div>
+                          <div className="text-slate-400 text-[11px] mt-0.5 line-clamp-1">{item.descricao}</div>
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
                         {item.catalogo_servico_id ? (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-brand-700 bg-brand-50 border border-brand-200 px-2 py-0.5 rounded-md">
-                            <Layers className="w-2.5 h-2.5" /> Catálogo #{item.catalogo_servico_id}
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-indigo-700 bg-indigo-50 border border-indigo-200/80 px-2.5 py-0.5 rounded-full">
+                            <Layers className="w-3 h-3" /> Catálogo #{item.catalogo_servico_id}
                           </span>
                         ) : (
-                          <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-slate-600 bg-slate-100 border border-slate-200 px-2 py-0.5 rounded-md">
-                            <Sparkles className="w-2.5 h-2.5" /> Avulso / Variável
+                          <span className="inline-flex items-center gap-1 text-[10px] font-bold text-slate-600 bg-slate-100 border border-slate-200/80 px-2.5 py-0.5 rounded-full">
+                            <Sparkles className="w-3 h-3" /> Avulso
                           </span>
                         )}
                       </td>
                       <td className="py-3.5 px-4 text-center whitespace-nowrap">
-                        <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full font-semibold text-[10px] bg-amber-100 text-amber-800 border border-amber-200">
-                          <Clock className="w-3 h-3 text-amber-600" /> PENDENTE
+                        <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full font-bold text-[10px] bg-amber-50 text-amber-700 border border-amber-200/80">
+                          <span className="w-1.5 h-1.5 rounded-full bg-amber-500 animate-pulse"></span>
+                          PENDENTE
                         </span>
                       </td>
                       <td className="py-3.5 px-4 text-right font-medium text-slate-700 whitespace-nowrap">
-                        {item.quantidade} <span className="text-[10px] text-slate-400">{item.unidade_medida}</span>
+                        {item.quantidade} <span className="text-[10px] font-semibold text-slate-400 uppercase">{item.unidade_medida}</span>
                       </td>
-                      <td className="py-3.5 px-4 text-right font-medium text-slate-700 whitespace-nowrap">
+                      <td className="py-3.5 px-4 text-right font-medium text-slate-600 whitespace-nowrap tabular-nums">
                         {formatarMoeda(item.valor_unitario)}
                       </td>
-                      <td className="py-3.5 px-4 text-right font-bold text-slate-900 text-sm whitespace-nowrap">
+                      <td className="py-3.5 px-4 text-right font-black text-slate-900 text-sm whitespace-nowrap tabular-nums">
                         {formatarMoeda(item.valor_total)}
                       </td>
                     </tr>
                   ))}
                 </tbody>
-                <tfoot className="bg-slate-50/80 border-t border-slate-200 text-xs font-bold text-slate-900">
+                <tfoot className="bg-slate-50 border-t border-slate-200/80 text-xs font-bold text-slate-900">
                   <tr>
-                    <td colSpan={4} className="py-3 px-4 text-slate-600">
+                    <td colSpan={4} className="py-3.5 px-4 text-slate-600">
                       Subtotal Acumulado Pendente ({lancamentosPendentes.length} itens)
                     </td>
-                    <td colSpan={3} className="py-3 px-4 text-right text-base text-brand-700">
+                    <td colSpan={3} className="py-3.5 px-4 text-right text-base font-black text-emerald-700 tabular-nums">
                       {formatarMoeda(totalValorBrutoPendente)}
                     </td>
                   </tr>

@@ -260,39 +260,39 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
       )}
 
       {/* Totalizadores Rápidos */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">
               Total no Catálogo
             </span>
-            <span className="text-xl font-bold text-slate-900">{servicos.length}</span>
+            <span className="text-2xl font-black text-slate-900 tabular-nums">{servicos.length}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-brand-50 text-brand-600">
+          <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
             <Layers className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-semibold text-emerald-600 uppercase tracking-wide block">
+            <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-wide block">
               Serviços Ativos
             </span>
-            <span className="text-xl font-bold text-slate-900">{totalAtivos}</span>
+            <span className="text-2xl font-black text-emerald-700 tabular-nums">{totalAtivos}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600">
+          <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
             <CheckCircle2 className="w-5 h-5" />
           </div>
         </div>
 
-        <div className="bg-white p-4 rounded-xl border border-slate-200 shadow-2xs flex items-center justify-between">
+        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wide block">
+            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">
               Serviços Inativos
             </span>
-            <span className="text-xl font-bold text-slate-600">{totalInativos}</span>
+            <span className="text-2xl font-black text-slate-600 tabular-nums">{totalInativos}</span>
           </div>
-          <div className="p-2.5 rounded-xl bg-slate-100 text-slate-500">
+          <div className="p-2.5 rounded-xl bg-slate-100 text-slate-500 border border-slate-200/60">
             <Power className="w-5 h-5" />
           </div>
         </div>
@@ -489,33 +489,33 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
             return (
               <div
                 key={item.id}
-                className={`bg-white p-5 rounded-2xl border transition-all flex flex-col justify-between group shadow-2xs hover:shadow-md ${
+                className={`bg-white p-5 rounded-xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-md ${
                   isAtivo
-                    ? 'border-slate-200/90 hover:border-brand-300'
-                    : 'border-slate-200 bg-slate-50/50 opacity-75'
+                    ? 'border-slate-200/80 hover:border-indigo-300'
+                    : 'border-slate-200/60 bg-slate-50/50 opacity-75'
                 }`}
               >
                 <div>
                   {/* Topo do Card com Status e Badge de Unidade */}
                   <div className="flex items-start justify-between gap-2 mb-2.5">
                     <span
-                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full ${
+                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
                         isAtivo
-                          ? 'bg-emerald-100 text-emerald-800 border border-emerald-200'
-                          : 'bg-slate-200 text-slate-700'
+                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
+                          : 'bg-slate-100 text-slate-600 border border-slate-200'
                       }`}
                     >
                       <span className={`w-1.5 h-1.5 rounded-full ${isAtivo ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
                       {isAtivo ? 'ATIVO' : 'INATIVO'}
                     </span>
 
-                    <span className="text-[10px] font-bold px-2 py-0.5 rounded-md bg-slate-100 text-slate-600 uppercase">
+                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600 uppercase border border-slate-200/60">
                       {item.unidade_medida || 'UN'}
                     </span>
                   </div>
 
                   {/* Nome do Serviço */}
-                  <h4 className="font-bold text-sm text-slate-900 group-hover:text-brand-600 transition-colors mb-1.5">
+                  <h4 className="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors mb-1.5">
                     {item.nome}
                   </h4>
 
@@ -528,8 +528,8 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
                 {/* Rodapé do Card com Preço e Ações */}
                 <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-medium block">Preço Base Sugerido</span>
-                    <span className="font-extrabold text-slate-900 text-base">
+                    <span className="text-[10px] text-slate-400 font-semibold block uppercase tracking-wide">Preço Base</span>
+                    <span className="font-black text-slate-900 text-base tabular-nums">
                       {formatarMoeda(item.valor_base)}
                     </span>
                   </div>
