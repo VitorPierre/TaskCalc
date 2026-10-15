@@ -156,16 +156,28 @@ class LancamentoService:
 
     def listar_lancamentos(
         self,
-        catalogo_id: Optional[int] = None
+        catalogo_id: Optional[int] = None,
+        status_filtro: Optional[str] = None,
+        data_inicio: Optional[datetime] = None,
+        data_fim: Optional[datetime] = None
     ) -> List[LancamentoServico]:
         """
-        Caso de Uso: Listar os serviços executados.
+        Caso de Uso: Listar os serviços executados com suporte a filtros flexíveis.
         Retorna em ordem decrescente de data de execução (mais recentes primeiro).
         """
         query = self.db.query(LancamentoServico)
 
         if catalogo_id:
             query = query.filter(LancamentoServico.catalogo_servico_id == catalogo_id)
+
+        if status_filtro:
+            query = query.filter(LancamentoServico.status == status_filtro.strip().upper())
+
+        if data_inicio:
+            query = query.filter(LancamentoServico.data_execucao >= data_inicio)
+
+        if data_fim:
+            query = query.filter(LancamentoServico.data_execucao <= data_fim)
 
         return query.order_by(LancamentoServico.data_execucao.desc()).all()
 

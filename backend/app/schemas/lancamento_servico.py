@@ -78,5 +78,7 @@ class LancamentoServicoResponse(BaseModel):
     valor_total: float = Field(..., description="Valor total da execução (quantidade * valor_unitario)")
     data_execucao: datetime = Field(..., description="Data/hora em que o serviço foi executado")
     criado_em: datetime = Field(..., description="Data/hora do registro no sistema")
+    status: str = Field(default="PENDENTE", description="Status financeiro: 'PENDENTE' ou 'FATURADO'")
+    fechamento_id: Optional[int] = Field(default=None, description="ID do fechamento ao qual este lançamento pertence (se faturado)")
 
     model_config = ConfigDict(from_attributes=True)

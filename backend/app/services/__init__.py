@@ -2,7 +2,9 @@
 from app.services.servico_service import ServicoService
 from app.services.catalogo_service import CatalogoService
 from app.services.lancamento_service import LancamentoService
+from app.services.fechamento_service import FechamentoService
+from app.services.pdf_generator import GeradorPDFFechamento
 
-__all__ = ["ServicoService", "CatalogoService", "LancamentoService"]
+__all__ = ["ServicoService", "CatalogoService", "LancamentoService", "FechamentoService", "GeradorPDFFechamento"]
 
 

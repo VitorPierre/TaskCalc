@@ -12,6 +12,7 @@ Papel na Arquitetura:
 """
 
 from typing import List, Optional
+from datetime import datetime
 from fastapi import APIRouter, Depends, status, Query
 from sqlalchemy.orm import Session
 
@@ -56,16 +57,33 @@ def criar_lancamento(
     response_model=List[LancamentoServicoResponse],
     status_code=status.HTTP_200_OK,
     summary="Listar histórico de lançamentos",
-    description="Retorna os lançamentos realizados, ordenados pela data de execução mais recente."
+    description="Retorna os lançamentos realizados, ordenados pela data de execução mais recente, com filtros opcionais."
 )
 def listar_lancamentos(
     catalogo_id: Optional[int] = Query(
         default=None,
         description="Filtrar lançamentos originados de um serviço específico do catálogo."
     ),
+    status_filtro: Optional[str] = Query(
+        default=None,
+        description="Filtrar por status financeiro: 'PENDENTE' ou 'FATURADO'."
+    ),
+    data_inicio: Optional[datetime] = Query(
+        default=None,
+        description="Data de início para filtrar lançamentos executados no período."
+    ),
+    data_fim: Optional[datetime] = Query(
+        default=None,
+        description="Data de fim para filtrar lançamentos executados no período."
+    ),
     service: LancamentoService = Depends(get_lancamento_service)
 ):
-    return service.listar_lancamentos(catalogo_id=catalogo_id)
+    return service.listar_lancamentos(
+        catalogo_id=catalogo_id,
+        status_filtro=status_filtro,
+        data_inicio=data_inicio,
+        data_fim=data_fim
+    )
 
 
 @router.get(

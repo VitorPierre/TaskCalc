@@ -86,11 +86,34 @@ class LancamentoServico(Base):
         nullable=False
     )
 
+    # -----------------------------------------------------------------------
+    # STATUS FINANCEIRO E VÍNCULO COM O FECHAMENTO DE PERÍODO
+    # -----------------------------------------------------------------------
+    # Status do lançamento: 'PENDENTE' (aguardando faturamento) ou 'FATURADO' (já incluído em fechamento)
+    status = Column(
+        String(20),
+        nullable=False,
+        default="PENDENTE",
+        index=True
+    )
+
+    # Chave estrangeira para o Fechamento que consolidou este lançamento (quando faturado)
+    fechamento_id = Column(
+        Integer,
+        ForeignKey("fechamentos.id", ondelete="SET NULL"),
+        nullable=True,
+        index=True
+    )
+
     # Relacionamento opcional com o CatalogoServico para consultas agregadas
     catalogo = relationship("CatalogoServico", backref="lancamentos")
+
+    # Relacionamento com o Fechamento correspondente
+    fechamento = relationship("Fechamento", back_populates="lancamentos")
 
     def __repr__(self) -> str:
         return (
             f"<LancamentoServico(id={self.id}, nome='{self.nome_servico}', "
-            f"qtd={self.quantidade}, unitario={self.valor_unitario}, total={self.valor_total})>"
+            f"qtd={self.quantidade}, unitario={self.valor_unitario}, total={self.valor_total}, "
+            f"status='{self.status}')>"
         )

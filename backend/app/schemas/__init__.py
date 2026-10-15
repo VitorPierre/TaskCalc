@@ -11,6 +11,13 @@ from app.schemas.lancamento_servico import (
     LancamentoServicoCreate,
     LancamentoServicoResponse
 )
+from app.schemas.fechamento import (
+    FechamentoCreate,
+    FechamentoSimulacaoRequest,
+    FechamentoSimulacaoResponse,
+    FechamentoResponse,
+    FechamentoResumoResponse
+)
 
 __all__ = [
     "ServicoBase",
@@ -22,7 +29,12 @@ __all__ = [
     "CatalogoServicoUpdate",
     "CatalogoServicoResponse",
     "LancamentoServicoCreate",
-    "LancamentoServicoResponse"
+    "LancamentoServicoResponse",
+    "FechamentoCreate",
+    "FechamentoSimulacaoRequest",
+    "FechamentoSimulacaoResponse",
+    "FechamentoResponse",
+    "FechamentoResumoResponse"
 ]
 
 
