@@ -18,6 +18,15 @@ from app.schemas.fechamento import (
     FechamentoResponse,
     FechamentoResumoResponse
 )
+from app.schemas.usuario import (
+    PerfilUsuario,
+    UsuarioBase,
+    UsuarioCreate,
+    UsuarioUpdate,
+    UsuarioResponse,
+    UsuarioLogin,
+    UsuarioLoginResponse
+)
 
 __all__ = [
     "ServicoBase",
@@ -34,7 +43,14 @@ __all__ = [
     "FechamentoSimulacaoRequest",
     "FechamentoSimulacaoResponse",
     "FechamentoResponse",
-    "FechamentoResumoResponse"
+    "FechamentoResumoResponse",
+    "PerfilUsuario",
+    "UsuarioBase",
+    "UsuarioCreate",
+    "UsuarioUpdate",
+    "UsuarioResponse",
+    "UsuarioLogin",
+    "UsuarioLoginResponse"
 ]
 
 

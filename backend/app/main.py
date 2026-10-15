@@ -34,6 +34,7 @@ import app.models  # Garante que todos os models sejam descobertos pelo SQLAlche
 from app.routers.catalogo_router import router as catalogo_router
 from app.routers.lancamento_router import router as lancamento_router
 from app.routers.fechamento_router import router as fechamento_router
+from app.routers.auth_router import router as auth_router
 
 
 # Gerenciador de ciclo de vida (Lifespan) da aplicação (padrão moderno do FastAPI)
@@ -84,8 +85,10 @@ app.add_middleware(
 
 # Registro dos Routers (Controllers) com prefixo de versionamento da API
 app.include_router(catalogo_router, prefix="/api/v1")
+app.include_router(catalogo_router, prefix="/api/v1/catalogo", tags=["Catálogo de Serviços"])
 app.include_router(lancamento_router, prefix="/api/v1")
 app.include_router(fechamento_router, prefix="/api/v1")
+app.include_router(auth_router, prefix="/api/v1")
 
 
 

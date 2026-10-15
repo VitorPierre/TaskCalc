@@ -106,3 +106,81 @@ class CatalogoService:
                 detail=f"Serviço com ID {servico_id} não foi encontrado no catálogo."
             )
         return servico
+
+    def atualizar_servico(
+        self,
+        servico_id: int,
+        dados: CatalogoServicoUpdate
+    ) -> CatalogoServico:
+        """
+        Caso de Uso: Editar informações de um serviço existente no catálogo.
+
+        Regras de Negócio:
+        1. Localiza o serviço pelo ID (retorna 404 se não existir).
+        2. Se o nome for alterado, valida duplicidade garantindo que outro serviço não tenha o mesmo nome.
+        3. Aplica atualização parcial apenas nos campos explicitamente enviados.
+        4. O histórico de lançamentos passados NUNCA é recalculado (Snapshot RD01).
+        """
+        servico = self.buscar_por_id(servico_id)
+
+        # Se houver alteração de nome, valida se não colide com outro item
+        if dados.nome is not None:
+            nome_limpo = dados.nome.strip()
+            if nome_limpo.lower() != servico.nome.lower():
+                existente = (
+                    self.db.query(CatalogoServico)
+                    .filter(
+                        CatalogoServico.nome.ilike(nome_limpo),
+                        CatalogoServico.id != servico_id
+                    )
+                    .first()
+                )
+                if existente:
+                    raise HTTPException(
+                        status_code=status.HTTP_400_BAD_REQUEST,
+                        detail=f"Já existe outro serviço cadastrado com o nome '{nome_limpo}'."
+                    )
+            servico.nome = nome_limpo
+
+        if dados.descricao_padrao is not None:
+            servico.descricao_padrao = dados.descricao_padrao.strip() if dados.descricao_padrao else None
+
+        if dados.valor_base is not None:
+            servico.valor_base = float(dados.valor_base)
+
+        if dados.unidade_medida is not None:
+            servico.unidade_medida = dados.unidade_medida.strip().toUpperCase() if hasattr(dados.unidade_medida.strip(), 'toUpperCase') else dados.unidade_medida.strip().upper()
+
+        if dados.ativo is not None:
+            servico.ativo = bool(dados.ativo)
+
+        self.db.commit()
+        self.db.refresh(servico)
+        return servico
+
+    def alternar_status_servico(self, servico_id: int) -> CatalogoServico:
+        """
+        Caso de Uso: Inativar ou reativar um serviço do catálogo (Soft-delete).
+
+        Regras de Negócio:
+        - Inverte a flag booleana `ativo`.
+        - Serviços inativos não aparecem para novos lançamentos, mas preservam
+          a integridade dos lançamentos passados já realizados.
+        """
+        servico = self.buscar_por_id(servico_id)
+        servico.ativo = not servico.ativo
+
+        self.db.commit()
+        self.db.refresh(servico)
+        return servico
+
+    def inativar_servico(self, servico_id: int) -> CatalogoServico:
+        """
+        Caso de Uso: Desativar logicamente um serviço do catálogo.
+        """
+        servico = self.buscar_por_id(servico_id)
+        servico.ativo = False
+
+        self.db.commit()
+        self.db.refresh(servico)
+        return servico

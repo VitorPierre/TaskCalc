@@ -42,17 +42,26 @@ api.interceptors.response.use(
 );
 
 // -----------------------------------------------------------------------------
-// ENDPOINTS DO CATÁLOGO DE SERVIÇOS (/catalogo)
+// ENDPOINTS DO CATÁLOGO DE SERVIÇOS (/servicos)
 // -----------------------------------------------------------------------------
 export const catalogoAPI = {
   listar: (apenasAtivos = false) =>
-    api.get('/catalogo/', { params: { apenas_ativos: apenasAtivos } }).then((res) => res.data),
+    api.get('/servicos/', { params: { apenas_ativos: apenasAtivos } }).then((res) => res.data),
 
   criar: (dados) =>
-    api.post('/catalogo/', dados).then((res) => res.data),
+    api.post('/servicos/', dados).then((res) => res.data),
 
   obterPorId: (id) =>
-    api.get(`/catalogo/${id}`).then((res) => res.data),
+    api.get(`/servicos/${id}`).then((res) => res.data),
+
+  atualizar: (id, dados) =>
+    api.put(`/servicos/${id}`, dados).then((res) => res.data),
+
+  alternarStatus: (id) =>
+    api.patch(`/servicos/${id}/toggle-status`).then((res) => res.data),
+
+  inativar: (id) =>
+    api.delete(`/servicos/${id}`).then((res) => res.data),
 };
 
 // -----------------------------------------------------------------------------

@@ -9,7 +9,8 @@ from app.models.servico import Servico
 from app.models.catalogo_servico import CatalogoServico
 from app.models.lancamento_servico import LancamentoServico
 from app.models.fechamento import Fechamento
+from app.models.usuario import Usuario
 
-__all__ = ["Base", "Servico", "CatalogoServico", "LancamentoServico", "Fechamento"]
+__all__ = ["Base", "Servico", "CatalogoServico", "LancamentoServico", "Fechamento", "Usuario"]
 
 

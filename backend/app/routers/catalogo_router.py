@@ -42,6 +42,7 @@ from sqlalchemy.orm import Session
 from app.core.database import get_db
 from app.schemas.catalogo_servico import (
     CatalogoServicoCreate,
+    CatalogoServicoUpdate,
     CatalogoServicoResponse
 )
 from app.services.catalogo_service import CatalogoService
@@ -59,11 +60,6 @@ router = APIRouter(
 def get_catalogo_service(db: Session = Depends(get_db)) -> CatalogoService:
     """
     Função Provedora de Dependência (Dependency Provider).
-    
-    Como funciona:
-    - O FastAPI injeta a sessão de banco ativa da requisição (`db`).
-    - Retorna uma instância pronta de `CatalogoService` conectada a essa sessão.
-    - Isso isola o Router de saber como o banco é instanciado.
     """
     return CatalogoService(db)
 
@@ -82,12 +78,6 @@ def cadastrar_servico(
     dados: CatalogoServicoCreate,
     service: CatalogoService = Depends(get_catalogo_service)
 ):
-    """
-    Controlador responsável pelo cadastro de novos serviços:
-    - `dados`: JSON da requisição já validado pelo Pydantic (CatalogoServicoCreate).
-    - `service`: Instância de CatalogoService injetada pelo FastAPI.
-    - Retorna: Status 201 Created com o serviço cadastrado serializado em JSON.
-    """
     return service.cadastrar_servico(dados)
 
 
@@ -108,10 +98,72 @@ def listar_servicos(
     ),
     service: CatalogoService = Depends(get_catalogo_service)
 ):
-    """
-    Controlador responsável pela listagem de serviços:
-    - `apenas_ativos`: Parâmetro de busca via Query String (ex: /servicos?apenas_ativos=true).
-    - `service`: Camada de serviço responsável pela consulta no banco e ordenação.
-    - Retorna: Status 200 OK com a lista de serviços formatada.
-    """
     return service.listar_servicos(apenas_ativos=apenas_ativos)
+
+
+# ---------------------------------------------------------------------------
+# Endpoint 3: GET /servicos/{servico_id} - Obter detalhes de um serviço
+# ---------------------------------------------------------------------------
+@router.get(
+    "/{servico_id}",
+    response_model=CatalogoServicoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Buscar serviço por ID"
+)
+def buscar_servico_por_id(
+    servico_id: int,
+    service: CatalogoService = Depends(get_catalogo_service)
+):
+    return service.buscar_por_id(servico_id)
+
+
+# ---------------------------------------------------------------------------
+# Endpoint 4: PUT /servicos/{servico_id} - Atualizar serviço existente
+# ---------------------------------------------------------------------------
+@router.put(
+    "/{servico_id}",
+    response_model=CatalogoServicoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Editar serviço do catálogo",
+    description="Atualiza os dados de um item do catálogo preservando a integridade dos lançamentos já efetuados (RD01)."
+)
+def atualizar_servico(
+    servico_id: int,
+    dados: CatalogoServicoUpdate,
+    service: CatalogoService = Depends(get_catalogo_service)
+):
+    return service.atualizar_servico(servico_id, dados)
+
+
+# ---------------------------------------------------------------------------
+# Endpoint 5: PATCH /servicos/{servico_id}/toggle-status - Alternar status Ativo/Inativo
+# ---------------------------------------------------------------------------
+@router.patch(
+    "/{servico_id}/toggle-status",
+    response_model=CatalogoServicoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Alternar status ativo/inativo",
+    description="Ativa ou inativa um serviço. Serviços inativos não aparecem para novos lançamentos."
+)
+def alternar_status_servico(
+    servico_id: int,
+    service: CatalogoService = Depends(get_catalogo_service)
+):
+    return service.alternar_status_servico(servico_id)
+
+
+# ---------------------------------------------------------------------------
+# Endpoint 6: DELETE /servicos/{servico_id} - Inativação lógica (Soft Delete)
+# ---------------------------------------------------------------------------
+@router.delete(
+    "/{servico_id}",
+    response_model=CatalogoServicoResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Inativar serviço (Soft Delete)",
+    description="Desativa logicamente o serviço do catálogo preservando o histórico contábil."
+)
+def inativar_servico(
+    servico_id: int,
+    service: CatalogoService = Depends(get_catalogo_service)
+):
+    return service.inativar_servico(servico_id)
