@@ -4,69 +4,72 @@
 
 @layer base {
   body {
-    @apply bg-slate-50 text-slate-800 antialiased font-sans min-h-screen selection:bg-indigo-100 selection:text-indigo-900;
+    @apply bg-zinc-50/80 text-zinc-900 antialiased font-sans min-h-screen selection:bg-zinc-900 selection:text-white;
     margin: 0;
   }
 
-  /* Garante alinhamento numérico impecável para tabelas financeiras */
+  /* Garante alinhamento numérico impecável para tabelas e valores financeiros */
   .tabular-nums {
     font-variant-numeric: tabular-nums;
   }
 }
 
 @layer components {
-  /* Cartão padrão de SaaS financeiro com borda sutil e sombra suave */
-  .saas-card {
-    @apply bg-white border border-slate-200/80 rounded-xl shadow-sm transition-all duration-200;
+  /* Cartão Minimalista padrão Shadcn/Linear com borda sutil e raio contido */
+  .card-zinc {
+    @apply bg-white border border-zinc-200/80 rounded-lg shadow-xs;
   }
 
-  /* Cartão interativo com efeito hover */
-  .saas-card-interactive {
-    @apply bg-white border border-slate-200/80 rounded-xl shadow-sm hover:shadow-md hover:border-slate-300/90 transition-all duration-200;
+  /* Campo de formulário minimalista */
+  .input-zinc {
+    @apply w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 placeholder:text-zinc-400 transition-colors shadow-xs;
   }
 
-  /* Campo de formulário moderno */
-  .saas-input {
-    @apply w-full text-sm px-3.5 py-2.5 bg-white border border-slate-300/80 rounded-xl focus:ring-2 focus:ring-indigo-500/20 focus:border-indigo-600 outline-none transition-all shadow-2xs text-slate-900;
+  /* Botão Primário em Grafite Escuro */
+  .btn-primary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 bg-zinc-900 text-white hover:bg-zinc-800 text-sm font-medium rounded-md transition-colors disabled:opacity-50 disabled:cursor-not-allowed;
   }
 
-  /* Botão Primário Indigo Marcante */
-  .btn-primary-indigo {
-    @apply inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-indigo-600 hover:bg-indigo-700 active:bg-indigo-800 shadow-sm shadow-indigo-600/20 hover:shadow-md hover:shadow-indigo-600/30 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  /* Botão Secundário Minimalista */
+  .btn-secondary {
+    @apply inline-flex items-center justify-center gap-2 px-4 py-2 bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 text-sm font-medium rounded-md transition-colors disabled:opacity-50;
   }
 
-  /* Botão de Ação / Sucesso Financeiro Emerald */
-  .btn-action-emerald {
-    @apply inline-flex items-center justify-center gap-2 py-2.5 px-4 rounded-xl text-sm font-bold text-white bg-emerald-600 hover:bg-emerald-700 active:bg-emerald-800 shadow-sm shadow-emerald-600/20 hover:shadow-md hover:shadow-emerald-600/30 transition-all active:scale-[0.98] disabled:opacity-50 disabled:cursor-not-allowed;
+  /* Botão Fantasma / Ação Sutil */
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-1.5 px-3 py-1.5 text-zinc-600 hover:text-zinc-900 hover:bg-zinc-100 text-sm font-medium rounded-md transition-colors;
   }
 
-  /* Badge de status positivo */
-  .badge-positive {
-    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-emerald-50 text-emerald-700 border border-emerald-200/80;
+  /* Badges de Status Conforme Regras Estritas */
+  .badge-emerald {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200;
   }
 
-  /* Badge de status pendente */
-  .badge-pending {
-    @apply inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-semibold bg-amber-50 text-amber-700 border border-amber-200/80;
+  .badge-amber {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border bg-amber-50 text-amber-700 border-amber-200;
+  }
+
+  .badge-zinc {
+    @apply inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-xs font-medium border bg-zinc-100 text-zinc-700 border-zinc-200;
   }
 }
 
-/* Suavização de scrollbars */
+/* Scrollbars minimalistas */
 * {
   scrollbar-width: thin;
-  scrollbar-color: #cbd5e1 #f8fafc;
+  scrollbar-color: #d4d4d8 #fafafa;
 }
 
 *::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
 }
 
 *::-webkit-scrollbar-track {
-  background: #f8fafc;
+  background: #fafafa;
 }
 
 *::-webkit-scrollbar-thumb {
-  background-color: #cbd5e1;
+  background-color: #d4d4d8;
   border-radius: 9999px;
 }

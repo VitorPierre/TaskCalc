@@ -1,14 +1,13 @@
 /**
  * =============================================================================
- * COMPONENTE: CatalogoView.jsx
+ * COMPONENTE: CatalogoView.jsx (Minimalist Design System - Zinc / Shadcn)
  * =============================================================================
  * Papel na Arquitetura:
  * - Tela de gerenciamento do Catálogo de Serviços do TaskCalc.
- * - Lista todos os serviços cadastrados com suporte a busca e filtros por status (Ativo/Inativo).
+ * - Lista todos os serviços cadastrados com busca e filtro por status.
  * - Formulário para cadastrar novos itens consumindo a rota POST /api/v1/servicos/.
- * - Modal / Painel para editar informações de itens existentes (PUT).
- * - Permite inativar ou reativar serviços via Soft-Delete (PATCH /toggle-status),
- *   respeitando a imutabilidade dos lançamentos históricos já consolidados (RD01).
+ * - Modal para editar itens existentes (PUT).
+ * - Permite inativar ou reativar serviços via Soft-Delete (PATCH /toggle-status).
  * =============================================================================
  */
 
@@ -16,7 +15,7 @@ import React, { useState, useEffect } from 'react';
 import { catalogoAPI } from '../api/api';
 import {
   BookOpen,
-  Plus,
+  PlusCircle,
   RefreshCw,
   Search,
   Edit3,
@@ -27,8 +26,7 @@ import {
   DollarSign,
   Layers,
   X,
-  Filter,
-  ShieldCheck,
+  FileText,
 } from 'lucide-react';
 
 export default function CatalogoView({ onCatalogoAtualizado }) {
@@ -41,7 +39,7 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
   const [erro, setErro] = useState(null);
   const [sucesso, setSucesso] = useState(null);
 
-  // Estado do formulário de Novo Serviço
+  // Formulário de Novo Serviço
   const [exibirFormNovo, setExibirFormNovo] = useState(false);
   const [salvandoNovo, setSalvandoNovo] = useState(false);
   const [novoForm, setNovoForm] = useState({
@@ -51,7 +49,7 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
     valor_base: '',
   });
 
-  // Estado do Modal de Edição
+  // Modal de Edição
   const [servicoEditando, setServicoEditando] = useState(null);
   const [salvandoEdicao, setSalvandoEdicao] = useState(false);
   const [editForm, setEditForm] = useState({
@@ -62,20 +60,16 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
     ativo: true,
   });
 
-  // 1. Carrega a lista completa de serviços do catálogo
+  // 1. Carrega serviços do catálogo
   const carregarServicos = async () => {
     setCarregando(true);
     setErro(null);
     try {
-      // Busca todos os itens (ativos e inativos)
       const data = await catalogoAPI.listar(false);
-      setServicos(data);
-
-      if (onCatalogoAtualizado) {
-        onCatalogoAtualizado(data);
-      }
+      setServicos(data || []);
+      if (onCatalogoAtualizado) onCatalogoAtualizado(data || []);
     } catch (err) {
-      setErro(err.message || 'Falha ao carregar catálogo de serviços.');
+      setErro(err.message || 'Falha ao carregar catálogo.');
     } finally {
       setCarregando(false);
     }
@@ -85,7 +79,7 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
     carregarServicos();
   }, []);
 
-  // 2. Cadastro de Novo Serviço (POST)
+  // 2. Cadastrar Novo Serviço
   const handleCadastrar = async (e) => {
     e.preventDefault();
     if (!novoForm.nome.trim()) {
@@ -94,7 +88,7 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
     }
     const valorBaseNum = parseFloat(novoForm.valor_base);
     if (isNaN(valorBaseNum) || valorBaseNum < 0) {
-      setErro('Informe um valor base válido (maior ou igual a zero).');
+      setErro('Informe um valor base válido.');
       return;
     }
 
@@ -110,7 +104,7 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
       };
 
       const criado = await catalogoAPI.criar(payload);
-      setSucesso(`Serviço "${criado.nome}" cadastrado com sucesso no catálogo!`);
+      setSucesso(`Serviço "${criado.nome}" cadastrado com sucesso.`);
       setNovoForm({
         nome: '',
         descricao_padrao: '',
@@ -140,11 +134,10 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
     setErro(null);
   };
 
-  // 4. Salvar Edição (PUT)
+  // 4. Salvar Edição
   const handleSalvarEdicao = async (e) => {
     e.preventDefault();
     if (!servicoEditando) return;
-
     if (!editForm.nome.trim()) {
       setErro('O nome do serviço não pode ficar vazio.');
       return;
@@ -162,7 +155,7 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
       };
 
       const atualizado = await catalogoAPI.atualizar(servicoEditando.id, payload);
-      setSucesso(`Serviço "${atualizado.nome}" atualizado com sucesso!`);
+      setSucesso(`Serviço "${atualizado.nome}" atualizado.`);
       setServicoEditando(null);
       await carregarServicos();
       setTimeout(() => setSucesso(null), 4000);
@@ -173,17 +166,17 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
     }
   };
 
-  // 5. Inativar / Alternar Status (Soft Delete)
+  // 5. Inativar / Reativar (Soft-Delete)
   const handleAlternarStatus = async (item) => {
     try {
       setErro(null);
       const atualizado = await catalogoAPI.alternarStatus(item.id);
       const statusTexto = atualizado.ativo ? 'reativado' : 'inativado';
-      setSucesso(`Serviço "${atualizado.nome}" foi ${statusTexto} com sucesso!`);
+      setSucesso(`Serviço "${atualizado.nome}" foi ${statusTexto}.`);
       await carregarServicos();
       setTimeout(() => setSucesso(null), 4000);
     } catch (err) {
-      setErro(err.message || 'Falha ao alterar status do serviço.');
+      setErro(err.message || 'Falha ao alterar status.');
     }
   };
 
@@ -195,7 +188,6 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
       item.unidade_medida.toLowerCase().includes(busca.toLowerCase());
 
     if (!matchBusca) return false;
-
     if (filtroAtivos === 'ativos') return item.ativo === true;
     if (filtroAtivos === 'inativos') return item.ativo === false;
     return true;
@@ -209,17 +201,17 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
 
   return (
     <div className="space-y-6">
+      
       {/* ----------------------------------------------------------------- */}
-      {/* SEÇÃO 1: CABEÇALHO & CARDS RÁPIDOS                                */}
+      {/* HEADER DA TELA & AÇÕES                                            */}
       {/* ----------------------------------------------------------------- */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-2 border-b border-slate-200">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pb-4 border-b border-zinc-200">
         <div>
-          <h2 className="text-xl font-bold text-slate-900 flex items-center gap-2">
-            <BookOpen className="w-5 h-5 text-brand-600" />
+          <h1 className="text-xl font-semibold tracking-tight text-zinc-900">
             Catálogo de Serviços
-          </h2>
-          <p className="text-sm text-slate-500 mt-1">
-            Cadastre, edite e gerencie o portfólio de serviços com preços base sugeridos.
+          </h1>
+          <p className="text-xs text-zinc-500 mt-1">
+            Defina itens padrão, preços base sugeridos e unidades de medida.
           </p>
         </div>
 
@@ -227,119 +219,133 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
           <button
             onClick={carregarServicos}
             disabled={carregando}
-            className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-slate-700 bg-white border border-slate-300 rounded-lg hover:bg-slate-50 transition-colors disabled:opacity-50"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-white border border-zinc-200 text-zinc-700 hover:bg-zinc-50 text-xs font-medium rounded-md transition-colors shadow-xs disabled:opacity-50"
             title="Atualizar lista"
           >
-            <RefreshCw className={`w-3.5 h-3.5 ${carregando ? 'animate-spin text-brand-600' : ''}`} />
-            Atualizar
+            <RefreshCw className={`w-3.5 h-3.5 ${carregando ? 'animate-spin text-zinc-900' : 'text-zinc-500'}`} />
+            <span>Atualizar</span>
           </button>
 
           <button
             onClick={() => setExibirFormNovo(!exibirFormNovo)}
-            className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-lg shadow-sm shadow-brand-600/20 transition-all hover:shadow"
+            className="inline-flex items-center justify-center gap-1.5 px-3 py-1.5 bg-zinc-900 text-white hover:bg-zinc-800 text-xs font-medium rounded-md transition-colors shadow-xs"
           >
-            <Plus className="w-4 h-4" />
-            {exibirFormNovo ? 'Fechar Formulário' : 'Novo Serviço'}
+            <PlusCircle className="w-3.5 h-3.5" />
+            <span>{exibirFormNovo ? 'Fechar' : 'Novo Serviço'}</span>
           </button>
         </div>
       </div>
 
-      {/* Alertas */}
+      {/* Alertas Discretos */}
       {sucesso && (
-        <div className="p-3.5 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs sm:text-sm flex items-center gap-2.5 animate-fadeIn">
-          <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
-          <span>{sucesso}</span>
+        <div className="p-3 rounded-md bg-emerald-50 border border-emerald-200 text-emerald-900 text-xs flex items-center justify-between gap-2 animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <CheckCircle2 className="w-4 h-4 text-emerald-600 shrink-0" />
+            <span>{sucesso}</span>
+          </div>
+          <button onClick={() => setSucesso(null)} className="text-emerald-700 hover:text-emerald-900">
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
       {erro && (
-        <div className="p-3.5 rounded-xl bg-rose-50 border border-rose-200 text-rose-900 text-xs sm:text-sm flex items-center gap-2.5 animate-fadeIn">
-          <AlertCircle className="w-4 h-4 text-rose-600 shrink-0" />
-          <span>{erro}</span>
+        <div className="p-3 rounded-md bg-red-50 border border-red-200 text-red-900 text-xs flex items-center justify-between gap-2 animate-fadeIn">
+          <div className="flex items-center gap-2">
+            <AlertCircle className="w-4 h-4 text-red-600 shrink-0" />
+            <span>{erro}</span>
+          </div>
+          <button onClick={() => setErro(null)} className="text-red-700 hover:text-red-900">
+            <X className="w-3.5 h-3.5" />
+          </button>
         </div>
       )}
 
-      {/* Totalizadores Rápidos */}
-      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+      {/* Totalizadores Rápidos (Stat Cards Minimalistas) */}
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+        <div className="bg-white p-4 rounded-lg border border-zinc-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">
-              Total no Catálogo
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
+              Total Cadastrado
             </span>
-            <span className="text-2xl font-black text-slate-900 tabular-nums">{servicos.length}</span>
+            <span className="text-xl font-bold text-zinc-900 font-mono tabular-nums">
+              {servicos.length}
+            </span>
           </div>
-          <div className="p-2.5 rounded-xl bg-indigo-50 text-indigo-600 border border-indigo-100">
-            <Layers className="w-5 h-5" />
-          </div>
+          <span className="text-xs text-zinc-400 font-mono">itens</span>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+        <div className="bg-white p-4 rounded-lg border border-zinc-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-emerald-600 uppercase tracking-wide block">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
               Serviços Ativos
             </span>
-            <span className="text-2xl font-black text-emerald-700 tabular-nums">{totalAtivos}</span>
+            <span className="text-xl font-bold text-zinc-900 font-mono tabular-nums">
+              {totalAtivos}
+            </span>
           </div>
-          <div className="p-2.5 rounded-xl bg-emerald-50 text-emerald-600 border border-emerald-100">
-            <CheckCircle2 className="w-5 h-5" />
-          </div>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border bg-emerald-50 text-emerald-700 border-emerald-200">
+            Disponíveis
+          </span>
         </div>
 
-        <div className="bg-white p-4 sm:p-5 rounded-xl border border-slate-200/80 shadow-sm hover:shadow-md transition-all flex items-center justify-between">
+        <div className="bg-white p-4 rounded-lg border border-zinc-200/80 shadow-xs flex items-center justify-between">
           <div>
-            <span className="text-[11px] font-bold text-slate-400 uppercase tracking-wide block">
+            <span className="text-[11px] font-medium text-zinc-500 uppercase tracking-wider block">
               Serviços Inativos
             </span>
-            <span className="text-2xl font-black text-slate-600 tabular-nums">{totalInativos}</span>
+            <span className="text-xl font-bold text-zinc-900 font-mono tabular-nums">
+              {totalInativos}
+            </span>
           </div>
-          <div className="p-2.5 rounded-xl bg-slate-100 text-slate-500 border border-slate-200/60">
-            <Power className="w-5 h-5" />
-          </div>
+          <span className="inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border bg-zinc-100 text-zinc-700 border-zinc-200">
+            Ocultos
+          </span>
         </div>
       </div>
 
       {/* ----------------------------------------------------------------- */}
-      {/* SEÇÃO 2: FORMULÁRIO DE CADASTRO DE NOVO SERVIÇO                   */}
+      {/* FORMULÁRIO DE CADASTRO DE NOVO SERVIÇO                            */}
       {/* ----------------------------------------------------------------- */}
       {exibirFormNovo && (
-        <div className="bg-white p-5 sm:p-6 rounded-2xl border border-brand-200 shadow-xs bg-gradient-to-b from-brand-50/20 to-white animate-fadeIn">
-          <div className="flex items-center justify-between pb-3 border-b border-slate-100 mb-4">
-            <h3 className="text-sm sm:text-base font-bold text-slate-900 flex items-center gap-2">
-              <Tag className="w-4 h-4 text-brand-600" />
-              Cadastrar Novo Item no Catálogo
+        <div className="bg-white p-5 rounded-lg border border-zinc-200 shadow-xs space-y-4 animate-fadeIn">
+          <div className="flex items-center justify-between pb-3 border-b border-zinc-100">
+            <h3 className="text-sm font-semibold text-zinc-900 flex items-center gap-2">
+              <Tag className="w-4 h-4 text-zinc-500" />
+              Cadastrar Novo Serviço no Catálogo
             </h3>
             <button
               onClick={() => setExibirFormNovo(false)}
-              className="text-slate-400 hover:text-slate-600 p-1"
+              className="text-zinc-400 hover:text-zinc-700 p-1 rounded-md"
             >
               <X className="w-4 h-4" />
             </button>
           </div>
 
           <form onSubmit={handleCadastrar} className="space-y-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-              {/* NOME DO SERVIÇO */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              {/* NOME */}
               <div className="sm:col-span-2">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-zinc-700 mb-1">
                   Nome do Serviço *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: Formatação de Computador, Troca de Óleo, Consultoria..."
+                  placeholder="Ex: Formatação de Computador, Troca de Óleo..."
                   value={novoForm.nome}
                   onChange={(e) => setNovoForm({ ...novoForm, nome: e.target.value })}
-                  className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs"
+                  className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 placeholder:text-zinc-400 shadow-xs"
                 />
               </div>
 
-              {/* VALOR BASE */}
+              {/* PREÇO BASE */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
-                  Preço Base Sugerido (R$) *
+                <label className="block text-xs font-medium text-zinc-700 mb-1">
+                  Preço Base (R$) *
                 </label>
                 <div className="relative">
-                  <span className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-400 text-xs font-bold">
+                  <span className="absolute left-3 top-1/2 -translate-y-1/2 text-zinc-400 text-xs font-mono font-medium pointer-events-none">
                     R$
                   </span>
                   <input
@@ -350,106 +356,109 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
                     placeholder="0.00"
                     value={novoForm.valor_base}
                     onChange={(e) => setNovoForm({ ...novoForm, valor_base: e.target.value })}
-                    className="w-full text-sm pl-9 pr-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs font-semibold text-slate-900"
+                    className="w-full text-sm pl-9 pr-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 font-mono tabular-nums text-right shadow-xs font-medium"
                   />
                 </div>
               </div>
 
               {/* UNIDADE DE MEDIDA */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-zinc-700 mb-1">
                   Unidade de Medida *
                 </label>
                 <input
                   type="text"
                   required
-                  placeholder="Ex: UN, HORA, KM, DIARIA, M2"
+                  placeholder="UN, HORA, KM"
                   value={novoForm.unidade_medida}
                   onChange={(e) => setNovoForm({ ...novoForm, unidade_medida: e.target.value })}
-                  className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs uppercase font-medium"
+                  className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 uppercase font-mono shadow-xs"
                 />
               </div>
 
               {/* DESCRIÇÃO PADRÃO */}
               <div className="sm:col-span-2 lg:col-span-4">
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-zinc-700 mb-1">
                   Descrição Padrão do Escopo (Opcional)
                 </label>
                 <textarea
                   rows={2}
-                  placeholder="Descreva o escopo habitual deste serviço para preenchimento automático nos lançamentos..."
+                  placeholder="Descrição do serviço para preenchimento automático nos lançamentos..."
                   value={novoForm.descricao_padrao}
                   onChange={(e) => setNovoForm({ ...novoForm, descricao_padrao: e.target.value })}
-                  className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs resize-none"
+                  className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 placeholder:text-zinc-400 shadow-xs resize-none"
                 />
               </div>
             </div>
 
-            <div className="flex items-center justify-between pt-2">
-              <span className="text-xs text-slate-500 flex items-center gap-1.5">
-                <ShieldCheck className="w-3.5 h-3.5 text-brand-600" />
-                Novos lançamentos herdarão este preço no modo Snapshot.
-              </span>
-
-              <div className="flex items-center gap-2">
-                <button
-                  type="button"
-                  onClick={() => setExibirFormNovo(false)}
-                  className="px-3.5 py-2 text-xs font-medium text-slate-600 hover:text-slate-800"
-                >
-                  Cancelar
-                </button>
-                <button
-                  type="submit"
-                  disabled={salvandoNovo}
-                  className="px-5 py-2 text-xs font-semibold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all disabled:opacity-50"
-                >
-                  {salvandoNovo ? 'Salvando...' : 'Cadastrar no Catálogo'}
-                </button>
-              </div>
+            <div className="flex items-center justify-end gap-2 pt-2 border-t border-zinc-100">
+              <button
+                type="button"
+                onClick={() => setExibirFormNovo(false)}
+                className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-colors"
+              >
+                Cancelar
+              </button>
+              <button
+                type="submit"
+                disabled={salvandoNovo}
+                className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 bg-zinc-900 text-white hover:bg-zinc-800 text-xs font-medium rounded-md transition-colors disabled:opacity-50 shadow-xs"
+              >
+                {salvandoNovo ? (
+                  <>
+                    <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                    <span>Salvando...</span>
+                  </>
+                ) : (
+                  <>
+                    <PlusCircle className="w-3.5 h-3.5" />
+                    <span>Cadastrar</span>
+                  </>
+                )}
+              </button>
             </div>
           </form>
         </div>
       )}
 
       {/* ----------------------------------------------------------------- */}
-      {/* SEÇÃO 3: FILTROS & LISTAGEM DE SERVIÇOS                           */}
+      {/* FILTROS & LISTAGEM                                                */}
       {/* ----------------------------------------------------------------- */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3">
-        {/* Barra de Pesquisa */}
-        <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-slate-400 absolute left-3.5 top-1/2 -translate-y-1/2" />
+        {/* Campo de Pesquisa */}
+        <div className="relative flex-1 max-w-sm">
+          <Search className="w-4 h-4 text-zinc-400 absolute left-3 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="text"
             placeholder="Pesquisar por nome ou unidade..."
             value={busca}
             onChange={(e) => setBusca(e.target.value)}
-            className="w-full text-xs sm:text-sm pl-9 pr-3.5 py-2 bg-white border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs"
+            className="w-full text-xs sm:text-sm pl-9 pr-3 py-1.5 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 placeholder:text-zinc-400 shadow-xs"
           />
         </div>
 
-        {/* Filtro de Status Ativo / Inativo */}
-        <div className="flex items-center gap-1 text-xs bg-slate-100 p-1 rounded-xl self-start sm:self-auto">
+        {/* Segmented Control de Filtro (Todos / Ativos / Inativos) */}
+        <div className="bg-zinc-100 p-1 rounded-md flex self-start sm:self-auto">
           <button
             onClick={() => setFiltroAtivos('todos')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filtroAtivos === 'todos' ? 'bg-white text-slate-900 shadow-2xs' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3 py-1 text-xs font-medium rounded transition-all ${
+              filtroAtivos === 'todos' ? 'bg-white shadow-xs text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'
             }`}
           >
             Todos ({servicos.length})
           </button>
           <button
             onClick={() => setFiltroAtivos('ativos')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filtroAtivos === 'ativos' ? 'bg-white text-emerald-700 shadow-2xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3 py-1 text-xs font-medium rounded transition-all ${
+              filtroAtivos === 'ativos' ? 'bg-white shadow-xs text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'
             }`}
           >
             Ativos ({totalAtivos})
           </button>
           <button
             onClick={() => setFiltroAtivos('inativos')}
-            className={`px-3 py-1.5 rounded-lg font-medium transition-colors ${
-              filtroAtivos === 'inativos' ? 'bg-white text-slate-800 shadow-2xs font-semibold' : 'text-slate-600 hover:text-slate-900'
+            className={`px-3 py-1 text-xs font-medium rounded transition-all ${
+              filtroAtivos === 'inativos' ? 'bg-white shadow-xs text-zinc-900' : 'text-zinc-500 hover:text-zinc-900'
             }`}
           >
             Inativos ({totalInativos})
@@ -457,89 +466,80 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
         </div>
       </div>
 
-      {/* Grid de Serviços */}
+      {/* Grid de Serviços Minimalista */}
       {carregando ? (
-        <div className="py-16 text-center text-slate-500 text-sm">
-          <RefreshCw className="w-6 h-6 animate-spin mx-auto text-brand-600 mb-2" />
+        <div className="py-16 text-center text-zinc-500 text-xs">
+          <RefreshCw className="w-5 h-5 animate-spin mx-auto text-zinc-400 mb-2" />
           Carregando catálogo de serviços...
         </div>
       ) : servicosFiltrados.length === 0 ? (
-        <div className="py-16 text-center bg-white rounded-2xl border border-dashed border-slate-300 p-8">
-          <BookOpen className="w-10 h-10 mx-auto text-slate-400 mb-2" />
-          <h4 className="text-sm font-semibold text-slate-700">Nenhum serviço encontrado</h4>
-          <p className="text-xs text-slate-500 mt-1 max-w-sm mx-auto">
-            {busca
-              ? `Nenhum resultado corresponde à busca "${busca}". Tente outro termo.`
-              : 'Cadastre seus primeiros serviços padrão para compor o catálogo.'}
+        <div className="py-12 text-center bg-white rounded-lg border border-dashed border-zinc-200 p-8">
+          <BookOpen className="w-8 h-8 mx-auto text-zinc-300 mb-2" />
+          <h4 className="text-sm font-medium text-zinc-700">Nenhum serviço encontrado</h4>
+          <p className="text-xs text-zinc-400 mt-1 max-w-sm mx-auto">
+            {busca ? `Nenhum resultado para "${busca}".` : 'Cadastre seu primeiro serviço padrão.'}
           </p>
           {!exibirFormNovo && (
             <button
               onClick={() => setExibirFormNovo(true)}
-              className="mt-4 inline-flex items-center gap-1.5 px-3 py-2 text-xs font-semibold text-brand-600 bg-brand-50 hover:bg-brand-100 rounded-lg transition-colors"
+              className="mt-3 inline-flex items-center gap-1.5 px-3 py-1.5 bg-zinc-900 text-white hover:bg-zinc-800 text-xs font-medium rounded-md transition-colors shadow-xs"
             >
-              <Plus className="w-3.5 h-3.5" /> Adicionar Serviço
+              <PlusCircle className="w-3.5 h-3.5" /> Adicionar Serviço
             </button>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
           {servicosFiltrados.map((item) => {
             const isAtivo = item.ativo !== false;
 
             return (
               <div
                 key={item.id}
-                className={`bg-white p-5 rounded-xl border transition-all flex flex-col justify-between group shadow-sm hover:shadow-md ${
-                  isAtivo
-                    ? 'border-slate-200/80 hover:border-indigo-300'
-                    : 'border-slate-200/60 bg-slate-50/50 opacity-75'
+                className={`bg-white p-4 rounded-lg border flex flex-col justify-between transition-colors shadow-xs ${
+                  isAtivo ? 'border-zinc-200/80 hover:border-zinc-300' : 'border-zinc-200/60 bg-zinc-50/40 opacity-75'
                 }`}
               >
                 <div>
-                  {/* Topo do Card com Status e Badge de Unidade */}
-                  <div className="flex items-start justify-between gap-2 mb-2.5">
+                  <div className="flex items-center justify-between gap-2 mb-2">
+                    {/* Badge de Status Estrita */}
                     <span
-                      className={`inline-flex items-center gap-1 text-[10px] font-bold px-2.5 py-0.5 rounded-full ${
+                      className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium border ${
                         isAtivo
-                          ? 'bg-emerald-50 text-emerald-700 border border-emerald-200/80'
-                          : 'bg-slate-100 text-slate-600 border border-slate-200'
+                          ? 'bg-emerald-50 text-emerald-700 border-emerald-200'
+                          : 'bg-zinc-100 text-zinc-600 border-zinc-200'
                       }`}
                     >
-                      <span className={`w-1.5 h-1.5 rounded-full ${isAtivo ? 'bg-emerald-500' : 'bg-slate-400'}`}></span>
-                      {isAtivo ? 'ATIVO' : 'INATIVO'}
+                      {isAtivo ? 'Ativo' : 'Inativo'}
                     </span>
 
-                    <span className="text-[10px] font-bold px-2.5 py-0.5 rounded-lg bg-slate-100 text-slate-600 uppercase border border-slate-200/60">
+                    <span className="text-[10px] font-mono uppercase px-1.5 py-0.5 rounded border border-zinc-200 text-zinc-500 bg-zinc-50">
                       {item.unidade_medida || 'UN'}
                     </span>
                   </div>
 
-                  {/* Nome do Serviço */}
-                  <h4 className="font-bold text-sm text-slate-900 group-hover:text-indigo-600 transition-colors mb-1.5">
+                  <h4 className="font-semibold text-sm text-zinc-900 mb-1">
                     {item.nome}
                   </h4>
 
-                  {/* Descrição Padrão */}
-                  <p className="text-xs text-slate-500 line-clamp-2 min-h-[2.5rem]">
-                    {item.descricao_padrao || 'Sem descrição padrão configurada.'}
+                  <p className="text-xs text-zinc-500 line-clamp-2 min-h-[2rem]">
+                    {item.descricao_padrao || 'Sem descrição cadastrada.'}
                   </p>
                 </div>
 
-                {/* Rodapé do Card com Preço e Ações */}
-                <div className="pt-4 mt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-3 mt-3 border-t border-zinc-100 flex items-center justify-between">
                   <div>
-                    <span className="text-[10px] text-slate-400 font-semibold block uppercase tracking-wide">Preço Base</span>
-                    <span className="font-black text-slate-900 text-base tabular-nums">
+                    <span className="text-[10px] text-zinc-400 uppercase font-medium block">Preço Base</span>
+                    <span className="font-semibold text-zinc-900 text-sm font-mono tabular-nums">
                       {formatarMoeda(item.valor_base)}
                     </span>
                   </div>
 
-                  {/* Botões de Ação: Editar e Inativar/Reativar */}
-                  <div className="flex items-center gap-1.5">
+                  <div className="flex items-center gap-1">
                     <button
                       type="button"
                       onClick={() => abrirModalEditar(item)}
-                      className="p-1.5 rounded-lg text-slate-500 hover:text-brand-600 hover:bg-brand-50 border border-transparent hover:border-brand-200 transition-colors"
+                      className="p-1.5 rounded-md text-zinc-400 hover:text-zinc-700 hover:bg-zinc-100 transition-colors"
                       title="Editar serviço"
                     >
                       <Edit3 className="w-4 h-4" />
@@ -548,12 +548,12 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
                     <button
                       type="button"
                       onClick={() => handleAlternarStatus(item)}
-                      className={`p-1.5 rounded-lg transition-colors border ${
+                      className={`p-1.5 rounded-md transition-colors ${
                         isAtivo
-                          ? 'text-slate-400 hover:text-rose-600 hover:bg-rose-50 border-transparent hover:border-rose-200'
-                          : 'text-emerald-600 hover:bg-emerald-50 border-emerald-200 bg-emerald-50/50'
+                          ? 'text-zinc-400 hover:text-red-600 hover:bg-red-50'
+                          : 'text-zinc-600 hover:text-emerald-700 hover:bg-emerald-50'
                       }`}
-                      title={isAtivo ? 'Inativar serviço (Soft Delete)' : 'Reativar serviço para novos lançamentos'}
+                      title={isAtivo ? 'Inativar serviço' : 'Reativar serviço'}
                     >
                       <Power className="w-4 h-4" />
                     </button>
@@ -566,30 +566,25 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
       )}
 
       {/* ----------------------------------------------------------------- */}
-      {/* MODAL DE EDIÇÃO DE SERVIÇO                                        */}
+      {/* MODAL DE EDIÇÃO                                                   */}
       {/* ----------------------------------------------------------------- */}
       {servicoEditando && (
-        <div className="fixed inset-0 z-50 bg-slate-900/60 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
-          <div className="bg-white rounded-2xl shadow-2xl max-w-lg w-full overflow-hidden border border-slate-200">
-            {/* Topo do Modal */}
-            <div className="p-5 bg-gradient-to-r from-slate-900 to-slate-800 text-white flex items-center justify-between">
-              <div className="flex items-center gap-2">
-                <Edit3 className="w-4 h-4 text-brand-400" />
-                <h3 className="font-bold text-sm">Editar Serviço do Catálogo</h3>
-              </div>
+        <div className="fixed inset-0 z-50 bg-zinc-900/40 backdrop-blur-xs flex items-center justify-center p-4 animate-fadeIn">
+          <div className="bg-white rounded-lg border border-zinc-200 shadow-xs max-w-md w-full overflow-hidden">
+            <div className="px-5 py-3.5 border-b border-zinc-200 flex items-center justify-between">
+              <h3 className="font-semibold text-sm text-zinc-900">Editar Serviço</h3>
               <button
                 type="button"
                 onClick={() => setServicoEditando(null)}
-                className="text-slate-400 hover:text-white p-1 rounded-lg"
+                className="text-zinc-400 hover:text-zinc-700 p-1 rounded-md"
               >
-                <X className="w-5 h-5" />
+                <X className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Formulário de Edição */}
-            <form onSubmit={handleSalvarEdicao} className="p-5 space-y-4">
+            <form onSubmit={handleSalvarEdicao} className="p-5 space-y-3.5">
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-zinc-700 mb-1">
                   Nome do Serviço *
                 </label>
                 <input
@@ -597,13 +592,13 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
                   required
                   value={editForm.nome}
                   onChange={(e) => setEditForm({ ...editForm, nome: e.target.value })}
-                  className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs font-medium"
+                  className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 shadow-xs"
                 />
               </div>
 
-              <div className="grid grid-cols-2 gap-4">
+              <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-medium text-zinc-700 mb-1">
                     Preço Base (R$) *
                   </label>
                   <input
@@ -613,12 +608,12 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
                     required
                     value={editForm.valor_base}
                     onChange={(e) => setEditForm({ ...editForm, valor_base: e.target.value })}
-                    className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs font-semibold text-slate-900"
+                    className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 font-mono tabular-nums text-right shadow-xs"
                   />
                 </div>
 
                 <div>
-                  <label className="block text-xs font-semibold text-slate-700 mb-1">
+                  <label className="block text-xs font-medium text-zinc-700 mb-1">
                     Unidade de Medida *
                   </label>
                   <input
@@ -626,61 +621,61 @@ export default function CatalogoView({ onCatalogoAtualizado }) {
                     required
                     value={editForm.unidade_medida}
                     onChange={(e) => setEditForm({ ...editForm, unidade_medida: e.target.value })}
-                    className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs uppercase font-medium"
+                    className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 uppercase font-mono shadow-xs"
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-xs font-semibold text-slate-700 mb-1">
+                <label className="block text-xs font-medium text-zinc-700 mb-1">
                   Descrição Padrão
                 </label>
                 <textarea
-                  rows={3}
+                  rows={2}
                   value={editForm.descricao_padrao}
                   onChange={(e) => setEditForm({ ...editForm, descricao_padrao: e.target.value })}
-                  className="w-full text-sm px-3.5 py-2.5 border border-slate-300 rounded-xl focus:ring-2 focus:ring-brand-500 focus:border-brand-500 outline-none shadow-2xs resize-none"
+                  className="w-full text-sm px-3 py-2 bg-white border border-zinc-200 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-900 focus:border-zinc-900 text-zinc-900 shadow-xs resize-none"
                 />
               </div>
 
-              {/* Status Ativo/Inativo */}
-              <div className="flex items-center justify-between p-3 rounded-xl bg-slate-50 border border-slate-200">
-                <div>
-                  <span className="text-xs font-bold text-slate-800 block">Disponível para Novos Lançamentos</span>
-                  <span className="text-[11px] text-slate-500">Se inativo, fica oculto para novos cadastros.</span>
-                </div>
-                <label className="relative inline-flex items-center cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={editForm.ativo}
-                    onChange={(e) => setEditForm({ ...editForm, ativo: e.target.checked })}
-                    className="sr-only peer"
-                  />
-                  <div className="w-11 h-6 bg-slate-200 peer-focus:outline-none rounded-full peer peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-slate-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all peer-checked:bg-emerald-600"></div>
-                </label>
+              <div className="flex items-center justify-between p-3 rounded-md bg-zinc-50 border border-zinc-200">
+                <span className="text-xs text-zinc-700 font-medium">Status Ativo no Catálogo</span>
+                <input
+                  type="checkbox"
+                  checked={editForm.ativo}
+                  onChange={(e) => setEditForm({ ...editForm, ativo: e.target.checked })}
+                  className="w-4 h-4 rounded text-zinc-900 focus:ring-zinc-900 border-zinc-300"
+                />
               </div>
 
-              {/* Botões */}
-              <div className="flex items-center justify-end gap-2 pt-3 border-t border-slate-100">
+              <div className="flex items-center justify-end gap-2 pt-3 border-t border-zinc-100">
                 <button
                   type="button"
                   onClick={() => setServicoEditando(null)}
-                  className="px-4 py-2 text-xs font-semibold text-slate-600 hover:text-slate-800"
+                  className="px-3 py-1.5 text-xs font-medium text-zinc-600 hover:text-zinc-900 hover:bg-zinc-50 rounded-md transition-colors"
                 >
                   Cancelar
                 </button>
                 <button
                   type="submit"
                   disabled={salvandoEdicao}
-                  className="px-5 py-2 text-xs font-bold text-white bg-brand-600 hover:bg-brand-700 rounded-xl shadow-sm transition-all disabled:opacity-50"
+                  className="inline-flex items-center justify-center gap-1.5 px-4 py-1.5 bg-zinc-900 text-white hover:bg-zinc-800 text-xs font-medium rounded-md transition-colors disabled:opacity-50 shadow-xs"
                 >
-                  {salvandoEdicao ? 'Salvando Alterações...' : 'Salvar Alterações'}
+                  {salvandoEdicao ? (
+                    <>
+                      <RefreshCw className="w-3.5 h-3.5 animate-spin" />
+                      <span>Salvando...</span>
+                    </>
+                  ) : (
+                    <span>Salvar Alterações</span>
+                  )}
                 </button>
               </div>
             </form>
           </div>
         </div>
       )}
+
     </div>
   );
 }

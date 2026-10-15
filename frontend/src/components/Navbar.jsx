@@ -6,9 +6,9 @@ import {
   Wifi,
   WifiOff,
   ShieldCheck,
-  Briefcase,
+  UserCheck,
   LogOut,
-  User,
+  FileText,
 } from 'lucide-react';
 
 export default function Navbar({ usuario, onLogout }) {
@@ -32,7 +32,7 @@ export default function Navbar({ usuario, onLogout }) {
   }, []);
 
   return (
-    <header className="bg-white border-b border-slate-200 sticky top-0 z-30 shadow-xs">
+    <header className="bg-white border-b border-slate-200/80 sticky top-0 z-30 shadow-2xs">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-16">
           
@@ -43,7 +43,9 @@ export default function Navbar({ usuario, onLogout }) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-bold text-xl tracking-tight text-slate-900">Task<span className="text-indigo-600">Calc</span></span>
+                <span className="font-bold text-xl tracking-tight text-slate-900">
+                  Task<span className="text-indigo-600">Calc</span>
+                </span>
                 <span className="text-[10px] font-bold uppercase px-2 py-0.5 rounded-full bg-indigo-50 text-indigo-700 border border-indigo-200/60">
                   v1.0
                 </span>
@@ -62,21 +64,21 @@ export default function Navbar({ usuario, onLogout }) {
                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75"></span>
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
-                  <span className="font-medium text-emerald-700 flex items-center gap-1">
+                  <span className="font-semibold text-emerald-700 flex items-center gap-1.5">
                     <Wifi className="w-3.5 h-3.5" /> Online
                   </span>
                 </>
               ) : apiOnline === false ? (
                 <>
                   <span className="h-2 w-2 rounded-full bg-rose-500"></span>
-                  <span className="font-medium text-rose-700 flex items-center gap-1">
+                  <span className="font-semibold text-rose-700 flex items-center gap-1.5">
                     <WifiOff className="w-3.5 h-3.5" /> Offline
                   </span>
                 </>
               ) : (
                 <>
                   <span className="h-2 w-2 rounded-full bg-amber-400 animate-pulse"></span>
-                  <span className="font-medium text-amber-700">Verificando...</span>
+                  <span className="font-medium text-amber-700">Conectando...</span>
                 </>
               )}
             </div>
@@ -86,33 +88,35 @@ export default function Navbar({ usuario, onLogout }) {
               <div className="flex items-center gap-2 pl-2 sm:border-l border-slate-200">
                 {/* Badge do Perfil */}
                 {usuario.perfil === 'GESTOR' ? (
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80">
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80 shadow-2xs">
                     <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
                     <span>GESTOR</span>
                   </div>
                 ) : (
-                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-800 border border-indigo-200/80">
-                    <Briefcase className="w-3.5 h-3.5 text-indigo-600" />
+                  <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-bold bg-indigo-50 text-indigo-800 border border-indigo-200/80 shadow-2xs">
+                    <UserCheck className="w-3.5 h-3.5 text-indigo-600" />
                     <span>PRESTADOR</span>
                   </div>
                 )}
 
                 {/* Nome do Usuário */}
-                <div className="hidden sm:block text-left">
-                  <div className="text-xs font-bold text-slate-800 line-clamp-1 max-w-[120px] lg:max-w-[160px]">
+                <div className="hidden sm:flex items-center gap-1.5 text-left">
+                  <UserCheck className="w-3.5 h-3.5 text-slate-400" />
+                  <span className="text-xs font-bold text-slate-800 line-clamp-1 max-w-[120px] lg:max-w-[160px]">
                     {usuario.nome}
-                  </div>
+                  </span>
                 </div>
 
-                {/* Botão Sair */}
+                {/* Botão Sair Moderno com LogOut */}
                 {onLogout && (
                   <button
                     type="button"
                     onClick={onLogout}
-                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors"
-                    title="Encerrar sessão (Logout)"
+                    className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-rose-600 hover:bg-rose-50 border border-slate-200 hover:border-rose-200 transition-all shadow-2xs"
+                    title="Encerrar sessão de trabalho"
                   >
-                    <LogOut className="w-4 h-4" />
+                    <LogOut className="w-3.5 h-3.5" />
+                    <span className="hidden md:inline">Sair</span>
                   </button>
                 )}
               </div>
@@ -123,11 +127,12 @@ export default function Navbar({ usuario, onLogout }) {
               href="http://localhost:8000/docs"
               target="_blank"
               rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
-              title="Acessar documentação Swagger da API"
+              className="inline-flex items-center gap-1.5 px-2.5 py-1.5 rounded-lg text-xs font-bold text-slate-600 hover:text-indigo-600 hover:bg-indigo-50/50 transition-colors border border-slate-200 hover:border-indigo-200 shadow-2xs"
+              title="Acessar documentação interativa Swagger (FastAPI)"
             >
+              <FileText className="w-3.5 h-3.5 text-indigo-600" />
               <span className="hidden sm:inline">Swagger API</span>
-              <ExternalLink className="w-3.5 h-3.5" />
+              <ExternalLink className="w-3 h-3 text-slate-400" />
             </a>
           </div>
 
