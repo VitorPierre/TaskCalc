@@ -1,0 +1,5 @@
+# Diretrizes do Projeto - TaskCalc
+- Stack: Backend em Python (FastAPI + SQLAlchemy + SQLite) e Frontend em React.
+- Arquitetura: Padrão MVC e Service Layer estrito.
+- Regra de Negócio Crítica (RD01): O preço e o título do serviço lançado devem gravar o "snapshot" (cópia exata) do momento da execução. Nunca altere dados de lançamentos já passados ou vinculados a fechamentos.
+- Sempre adicione comentários explicativos nas camadas de serviço para fins didáticos de aprendizado.
