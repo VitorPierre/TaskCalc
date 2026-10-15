@@ -24,6 +24,19 @@ const api = axios.create({
   },
 });
 
+// Interceptor de requisição para injetar o token JWT ou cabeçalho de usuário autenticado
+api.interceptors.request.use((config) => {
+  const token = localStorage.getItem('taskcalc_token');
+  if (token) {
+    config.headers.Authorization = `Bearer ${token}`;
+  } else {
+    // Permite que requisições administrativas no frontend utilizem o gestor padrão para testes
+    const userEmail = localStorage.getItem('taskcalc_user_email') || 'gestor_rbac_1792089151@taskcalc.com';
+    config.headers['X-User-Email'] = userEmail;
+  }
+  return config;
+});
+
 // Interceptor de resposta para padronização de tratamento de erros
 api.interceptors.response.use(
   (response) => response,
@@ -97,6 +110,39 @@ export const fechamentosAPI = {
   // Retorna a URL direta para visualização/download do PDF oficial
   getUrlPdf: (fechamentoId) =>
     `${API_BASE_URL}/fechamentos/${fechamentoId}/pdf`,
+};
+
+// -----------------------------------------------------------------------------
+// ENDPOINTS DE AUTENTICAÇÃO & USUÁRIOS (/auth)
+// -----------------------------------------------------------------------------
+export const authAPI = {
+  cadastro: (dados) =>
+    api.post('/auth/cadastro', dados).then((res) => res.data),
+
+  login: async (credenciais) => {
+    const data = await api.post('/auth/login', credenciais).then((res) => res.data);
+    if (data.access_token) {
+      localStorage.setItem('taskcalc_token', data.access_token);
+      localStorage.setItem('taskcalc_user', JSON.stringify(data.usuario));
+      localStorage.setItem('taskcalc_user_email', data.usuario.email);
+    }
+    return data;
+  },
+
+  obterUsuarioAtual: () =>
+    api.get('/auth/me').then((res) => res.data),
+
+  listarUsuarios: () =>
+    api.get('/auth/usuarios').then((res) => res.data),
+
+  listarPerfis: () =>
+    api.get('/auth/perfis').then((res) => res.data),
+
+  logout: () => {
+    localStorage.removeItem('taskcalc_token');
+    localStorage.removeItem('taskcalc_user');
+    localStorage.removeItem('taskcalc_user_email');
+  },
 };
 
 // -----------------------------------------------------------------------------

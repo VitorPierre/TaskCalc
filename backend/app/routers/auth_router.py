@@ -17,6 +17,9 @@ from fastapi import APIRouter, Depends, status
 from sqlalchemy.orm import Session
 
 from app.core.database import get_db
+from app.core.security import criar_token_acesso
+from app.core.deps import obter_usuario_atual
+from app.models.usuario import Usuario
 from app.schemas.usuario import (
     UsuarioCreate,
     UsuarioResponse,
@@ -78,12 +81,35 @@ def autenticar_usuario(
         email=credenciais.email,
         senha=credenciais.senha
     )
+    token = criar_token_acesso({
+        "sub": usuario.email,
+        "id": usuario.id,
+        "nome": usuario.nome,
+        "perfil": usuario.perfil
+    })
     return UsuarioLoginResponse(
         mensagem=f"Bem-vindo(a), {usuario.nome}! Autenticação realizada com sucesso.",
         autenticado=True,
-        usuario=usuario,
-        token_tipo="Bearer"
+        access_token=token,
+        token_tipo="Bearer",
+        usuario=usuario
     )
+
+
+@router.get(
+    "/me",
+    response_model=UsuarioResponse,
+    status_code=status.HTTP_200_OK,
+    summary="Consultar usuário atual (Logado)",
+    description="Retorna o perfil e os dados do usuário atualmente autenticado via Bearer token ou headers."
+)
+def obter_usuario_logado(
+    usuario_atual: Usuario = Depends(obter_usuario_atual)
+):
+    """
+    Endpoint para verificação do perfil e identidade do usuário conectado.
+    """
+    return usuario_atual
 
 
 @router.get(

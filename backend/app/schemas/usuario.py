@@ -126,8 +126,9 @@ class UsuarioLogin(BaseModel):
 
 
 class UsuarioLoginResponse(BaseModel):
-    """Retorno de login bem-sucedido com dados do usuário autenticado."""
+    """Retorno de login bem-sucedido com dados do usuário autenticado e token JWT."""
     mensagem: str = Field("Autenticação realizada com sucesso!", description="Mensagem de status")
     autenticado: bool = Field(True, description="Indica se o login foi validado")
-    usuario: UsuarioResponse = Field(..., description="Dados do usuário logado")
+    access_token: str = Field(..., description="Token JWT para autenticação Bearer nas rotas protegidas")
     token_tipo: str = Field("Bearer", description="Tipo de credencial/token")
+    usuario: UsuarioResponse = Field(..., description="Dados do usuário logado")

@@ -40,6 +40,8 @@ from sqlalchemy.orm import Session
 
 # Importações da Arquitetura
 from app.core.database import get_db
+from app.core.deps import exigir_gestor
+from app.models.usuario import Usuario
 from app.schemas.catalogo_servico import (
     CatalogoServicoCreate,
     CatalogoServicoUpdate,
@@ -65,24 +67,32 @@ def get_catalogo_service(db: Session = Depends(get_db)) -> CatalogoService:
 
 
 # ---------------------------------------------------------------------------
-# Endpoint 1: POST /servicos - Cadastrar novo serviço
+# Endpoint 1: POST /servicos - Cadastrar novo serviço (Apenas GESTOR)
 # ---------------------------------------------------------------------------
 @router.post(
     "/",
     response_model=CatalogoServicoResponse,
     status_code=status.HTTP_201_CREATED,
-    summary="Cadastrar serviço no catálogo",
-    description="Recebe os dados do novo serviço, valida via Pydantic e envia para a Service Layer persistir."
+    summary="Cadastrar serviço no catálogo (Apenas GESTOR)",
+    description=(
+        "Recebe os dados do novo serviço, valida via Pydantic e envia para a Service Layer persistir. "
+        "Acesso restrito exclusivamente a usuários com o perfil 'GESTOR'."
+    )
 )
 def cadastrar_servico(
     dados: CatalogoServicoCreate,
+    usuario_gestor: Usuario = Depends(exigir_gestor),
     service: CatalogoService = Depends(get_catalogo_service)
 ):
+    """
+    Cadastra um novo serviço no catálogo.
+    Exige autenticação e perfil 'GESTOR'.
+    """
     return service.cadastrar_servico(dados)
 
 
 # ---------------------------------------------------------------------------
-# Endpoint 2: GET /servicos - Listar serviços
+# Endpoint 2: GET /servicos - Listar serviços (Público / Prestador & Gestor)
 # ---------------------------------------------------------------------------
 @router.get(
     "/",
@@ -118,52 +128,76 @@ def buscar_servico_por_id(
 
 
 # ---------------------------------------------------------------------------
-# Endpoint 4: PUT /servicos/{servico_id} - Atualizar serviço existente
+# Endpoint 4: PUT /servicos/{servico_id} - Atualizar serviço existente (Apenas GESTOR)
 # ---------------------------------------------------------------------------
 @router.put(
     "/{servico_id}",
     response_model=CatalogoServicoResponse,
     status_code=status.HTTP_200_OK,
-    summary="Editar serviço do catálogo",
-    description="Atualiza os dados de um item do catálogo preservando a integridade dos lançamentos já efetuados (RD01)."
+    summary="Editar serviço do catálogo (Apenas GESTOR)",
+    description=(
+        "Atualiza os dados de um item do catálogo preservando a integridade dos lançamentos já efetuados (RD01). "
+        "Acesso restrito exclusivamente a usuários com o perfil 'GESTOR'."
+    )
 )
 def atualizar_servico(
     servico_id: int,
     dados: CatalogoServicoUpdate,
+    usuario_gestor: Usuario = Depends(exigir_gestor),
     service: CatalogoService = Depends(get_catalogo_service)
 ):
+    """
+    Atualiza dados do serviço no catálogo.
+    Exige autenticação e perfil 'GESTOR'.
+    """
     return service.atualizar_servico(servico_id, dados)
 
 
 # ---------------------------------------------------------------------------
-# Endpoint 5: PATCH /servicos/{servico_id}/toggle-status - Alternar status Ativo/Inativo
+# Endpoint 5: PATCH /servicos/{servico_id}/toggle-status - Alternar status Ativo/Inativo (Apenas GESTOR)
 # ---------------------------------------------------------------------------
 @router.patch(
     "/{servico_id}/toggle-status",
     response_model=CatalogoServicoResponse,
     status_code=status.HTTP_200_OK,
-    summary="Alternar status ativo/inativo",
-    description="Ativa ou inativa um serviço. Serviços inativos não aparecem para novos lançamentos."
+    summary="Alternar status ativo/inativo (Apenas GESTOR)",
+    description=(
+        "Ativa ou inativa um serviço. Serviços inativos não aparecem para novos lançamentos. "
+        "Acesso restrito exclusivamente a usuários com o perfil 'GESTOR'."
+    )
 )
 def alternar_status_servico(
     servico_id: int,
+    usuario_gestor: Usuario = Depends(exigir_gestor),
     service: CatalogoService = Depends(get_catalogo_service)
 ):
+    """
+    Alterna o status ativo/inativo de um serviço.
+    Exige autenticação e perfil 'GESTOR'.
+    """
     return service.alternar_status_servico(servico_id)
 
 
 # ---------------------------------------------------------------------------
-# Endpoint 6: DELETE /servicos/{servico_id} - Inativação lógica (Soft Delete)
+# Endpoint 6: DELETE /servicos/{servico_id} - Inativação lógica (Apenas GESTOR)
 # ---------------------------------------------------------------------------
 @router.delete(
     "/{servico_id}",
     response_model=CatalogoServicoResponse,
     status_code=status.HTTP_200_OK,
-    summary="Inativar serviço (Soft Delete)",
-    description="Desativa logicamente o serviço do catálogo preservando o histórico contábil."
+    summary="Inativar serviço (Soft Delete) (Apenas GESTOR)",
+    description=(
+        "Desativa logicamente o serviço do catálogo preservando o histórico contábil. "
+        "Acesso restrito exclusivamente a usuários com o perfil 'GESTOR'."
+    )
 )
 def inativar_servico(
     servico_id: int,
+    usuario_gestor: Usuario = Depends(exigir_gestor),
     service: CatalogoService = Depends(get_catalogo_service)
 ):
+    """
+    Inativa logicamente o serviço no catálogo.
+    Exige autenticação e perfil 'GESTOR'.
+    """
     return service.inativar_servico(servico_id)

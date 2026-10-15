@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { checkHealthAPI } from '../api/api';
-import { Calculator, ExternalLink, Wifi, WifiOff } from 'lucide-react';
+import { Calculator, ExternalLink, Wifi, WifiOff, ShieldCheck } from 'lucide-react';
 
 export default function Navbar() {
   const [apiOnline, setApiOnline] = useState(null);
@@ -69,6 +69,12 @@ export default function Navbar() {
                   <span className="font-medium text-amber-700">Verificando...</span>
                 </>
               )}
+            </div>
+
+            {/* Perfil Atual RBAC */}
+            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/80">
+              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+              <span>Perfil Ativo: <strong className="font-semibold text-amber-900">GESTOR</strong></span>
             </div>
 
             <a

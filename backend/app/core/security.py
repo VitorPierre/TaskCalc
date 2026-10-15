@@ -11,7 +11,16 @@ Papel na Arquitetura:
 =============================================================================
 """
 
+import os
+from datetime import datetime, timedelta, timezone
+from typing import Optional, Dict, Any
 import bcrypt
+import jwt
+
+# Configurações do algoritmo JWT
+SECRET_KEY = os.getenv("SECRET_KEY", "taskcalc-secret-security-key-2026-auth-token")
+ALGORITHM = "HS256"
+ACCESS_TOKEN_EXPIRE_MINUTES = 60 * 24  # 24 horas de validade
 
 
 def gerar_hash_senha(senha: str) -> str:
@@ -41,3 +50,38 @@ def verificar_senha(senha: str, senha_hash: str) -> bool:
         return bcrypt.checkpw(senha_bytes, hash_bytes)
     except Exception:
         return False
+
+
+def criar_token_acesso(dados: Dict[str, Any], expires_delta: Optional[timedelta] = None) -> str:
+    """
+    Gera um token JWT assinado digitalmente contendo as claims informadas.
+    
+    :param dados: Dicionário com payload (ex: sub=email, id, perfil).
+    :param expires_delta: Tempo de vida do token (default: 24h).
+    :return: String do JWT assinado.
+    """
+    payload = dados.copy()
+    agora = datetime.now(timezone.utc)
+    if expires_delta:
+        expira_em = agora + expires_delta
+    else:
+        expira_em = agora + timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+
+    payload.update({
+        "exp": expira_em,
+        "iat": agora
+    })
+    return jwt.encode(payload, SECRET_KEY, algorithm=ALGORITHM)
+
+
+def decodificar_token_acesso(token: str) -> Optional[Dict[str, Any]]:
+    """
+    Decodifica e valida a assinatura criptográfica e a validade temporal do JWT.
+    
+    :param token: Token JWT em formato string.
+    :return: Payload contendo as claims ou None se inválido/expirado.
+    """
+    try:
+        return jwt.decode(token, SECRET_KEY, algorithms=[ALGORITHM])
+    except jwt.PyJWTError:
+        return None
