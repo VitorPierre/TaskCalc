@@ -43,8 +43,9 @@ pip install -r requirements.txt
 ```
 
 ### 3. Iniciar o servidor de desenvolvimento
-```bash
-uvicorn app.main:app --reload
+Dentro da pasta `backend`:
+```powershell
+python -m uvicorn app.main:app --reload
 ```
 
 A API estará rodando em: `http://localhost:8000`

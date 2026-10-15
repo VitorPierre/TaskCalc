@@ -1,0 +1,29 @@
+# Ambientes Virtuais Python
+.venv/
+venv/
+ENV/
+backend/.venv/
+backend/venv/
+
+# Bytecodes e Caches
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+
+# Banco de dados local SQLite
+*.db
+*.sqlite3
+taskcalc.db
+backend/taskcalc.db
+
+# Configurações de IDEs
+.vscode/
+.idea/
+
+# Node / Frontend (para quando criar o React)
+node_modules/
+dist/
+build/
+.env
+.env.local

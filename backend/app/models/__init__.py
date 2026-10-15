@@ -6,5 +6,7 @@ reconheça todas as tabelas ao iniciar a aplicação.
 
 from app.core.database import Base
 from app.models.servico import Servico
+from app.models.catalogo_servico import CatalogoServico
 
-__all__ = ["Base", "Servico"]
+__all__ = ["Base", "Servico", "CatalogoServico"]
+
