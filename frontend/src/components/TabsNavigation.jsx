@@ -5,8 +5,8 @@ export const TAB_CATALOGO = 'catalogo';
 export const TAB_LANCAMENTOS = 'lancamentos';
 export const TAB_FECHAMENTO = 'fechamento';
 
-export default function TabsNavigation({ activeTab, onSelectTab, counts = {} }) {
-  const tabs = [
+export default function TabsNavigation({ activeTab, onSelectTab, counts = {}, perfil = 'GESTOR' }) {
+  const todasTabs = [
     {
       id: TAB_CATALOGO,
       label: 'Catálogo de Serviços',
@@ -14,6 +14,7 @@ export default function TabsNavigation({ activeTab, onSelectTab, counts = {} }) 
       icon: BookOpen,
       count: counts.catalogo,
       description: 'Definição de serviços padrão e preços base',
+      perfisPermitidos: ['GESTOR'], // Restrito a Gestor
     },
     {
       id: TAB_LANCAMENTOS,
@@ -22,6 +23,7 @@ export default function TabsNavigation({ activeTab, onSelectTab, counts = {} }) 
       icon: ClipboardList,
       count: counts.lancamentosPendentes !== undefined ? `${counts.lancamentosPendentes} pend.` : null,
       description: 'Registro de execuções com congelamento (RD01)',
+      perfisPermitidos: ['GESTOR', 'PRESTADOR'],
     },
     {
       id: TAB_FECHAMENTO,
@@ -30,8 +32,14 @@ export default function TabsNavigation({ activeTab, onSelectTab, counts = {} }) 
       icon: FileCheck,
       count: counts.fechamentos,
       description: 'Faturamento de intervalo e emissão do PDF',
+      perfisPermitidos: ['GESTOR', 'PRESTADOR'],
     },
   ];
+
+  // Exibe apenas as abas compatíveis com o perfil do usuário logado
+  const tabs = todasTabs.filter(
+    (tab) => !tab.perfisPermitidos || tab.perfisPermitidos.includes(perfil)
+  );
 
   return (
     <nav className="border-b border-slate-200 bg-white" aria-label="Abas de Navegação">

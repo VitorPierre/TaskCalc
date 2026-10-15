@@ -1,8 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { checkHealthAPI } from '../api/api';
-import { Calculator, ExternalLink, Wifi, WifiOff, ShieldCheck } from 'lucide-react';
+import {
+  Calculator,
+  ExternalLink,
+  Wifi,
+  WifiOff,
+  ShieldCheck,
+  Briefcase,
+  LogOut,
+  User,
+} from 'lucide-react';
 
-export default function Navbar() {
+export default function Navbar({ usuario, onLogout }) {
   const [apiOnline, setApiOnline] = useState(null);
 
   useEffect(() => {
@@ -43,9 +52,10 @@ export default function Navbar() {
             </div>
           </div>
 
-          {/* Status da Conexão com o Backend & Link Swagger */}
-          <div className="flex items-center gap-3 sm:gap-4">
-            <div className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs">
+          {/* Status da Conexão, Usuário Logado & Ações */}
+          <div className="flex items-center gap-2 sm:gap-3">
+            {/* Status do Backend */}
+            <div className="hidden md:flex items-center gap-2 px-3 py-1.5 rounded-full bg-slate-50 border border-slate-200/80 text-xs">
               {apiOnline === true ? (
                 <>
                   <span className="relative flex h-2 w-2">
@@ -53,14 +63,14 @@ export default function Navbar() {
                     <span className="relative inline-flex rounded-full h-2 w-2 bg-emerald-500"></span>
                   </span>
                   <span className="font-medium text-emerald-700 flex items-center gap-1">
-                    <Wifi className="w-3.5 h-3.5" /> Backend Conectado
+                    <Wifi className="w-3.5 h-3.5" /> Online
                   </span>
                 </>
               ) : apiOnline === false ? (
                 <>
                   <span className="h-2 w-2 rounded-full bg-rose-500"></span>
                   <span className="font-medium text-rose-700 flex items-center gap-1">
-                    <WifiOff className="w-3.5 h-3.5" /> Backend Offline
+                    <WifiOff className="w-3.5 h-3.5" /> Offline
                   </span>
                 </>
               ) : (
@@ -71,12 +81,44 @@ export default function Navbar() {
               )}
             </div>
 
-            {/* Perfil Atual RBAC */}
-            <div className="hidden sm:flex items-center gap-1.5 px-2.5 py-1.5 rounded-full text-xs font-medium bg-amber-50 text-amber-800 border border-amber-200/80">
-              <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
-              <span>Perfil Ativo: <strong className="font-semibold text-amber-900">GESTOR</strong></span>
-            </div>
+            {/* Dados do Usuário Logado */}
+            {usuario && (
+              <div className="flex items-center gap-2 pl-2 sm:border-l border-slate-200">
+                {/* Badge do Perfil */}
+                {usuario.perfil === 'GESTOR' ? (
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-amber-50 text-amber-800 border border-amber-200/80">
+                    <ShieldCheck className="w-3.5 h-3.5 text-amber-600" />
+                    <span>GESTOR</span>
+                  </div>
+                ) : (
+                  <div className="flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-bold bg-blue-50 text-blue-800 border border-blue-200/80">
+                    <Briefcase className="w-3.5 h-3.5 text-blue-600" />
+                    <span>PRESTADOR</span>
+                  </div>
+                )}
 
+                {/* Nome do Usuário */}
+                <div className="hidden sm:block text-left">
+                  <div className="text-xs font-bold text-slate-800 line-clamp-1 max-w-[120px] lg:max-w-[160px]">
+                    {usuario.nome}
+                  </div>
+                </div>
+
+                {/* Botão Sair */}
+                {onLogout && (
+                  <button
+                    type="button"
+                    onClick={onLogout}
+                    className="p-1.5 rounded-lg text-slate-400 hover:text-rose-600 hover:bg-rose-50 border border-transparent hover:border-rose-200 transition-colors"
+                    title="Encerrar sessão (Logout)"
+                  >
+                    <LogOut className="w-4 h-4" />
+                  </button>
+                )}
+              </div>
+            )}
+
+            {/* Link Documentação Swagger */}
             <a
               href="http://localhost:8000/docs"
               target="_blank"
@@ -84,7 +126,7 @@ export default function Navbar() {
               className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-brand-600 hover:bg-slate-100 transition-colors border border-transparent hover:border-slate-200"
               title="Acessar documentação Swagger da API"
             >
-              <span>Swagger API</span>
+              <span className="hidden sm:inline">Swagger API</span>
               <ExternalLink className="w-3.5 h-3.5" />
             </a>
           </div>
